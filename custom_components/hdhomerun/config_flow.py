@@ -34,6 +34,7 @@ CONF_FRIENDLY_NAME: str = "friendly_name"
 STEP_CONFIRM: str = "confirm"
 STEP_DETAILS: str = "details"
 STEP_FINISH: str = "finish"
+STEP_FRIENDLY_NAME: str = "friendly_name"
 STEP_USER: str = "user"
 
 
@@ -46,6 +47,14 @@ async def _async_build_schema_with_user_input(step: str, user_input: dict) -> vo
     """
 
     schema = {}
+    if step == STEP_FRIENDLY_NAME:
+        schema = {
+            vol.Required(
+                CONF_FRIENDLY_NAME,
+                default=user_input.get(CONF_FRIENDLY_NAME, "")
+            ): str,
+        }
+
     if step == STEP_USER:
         schema = {
             vol.Optional(
@@ -110,17 +119,6 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, HDHomerunLogger, domain=DOM
         self.hass.async_create_task(self.hass.config_entries.flow.async_configure(flow_id=self.flow_id))
         _LOGGER.debug(self.message_format("exited"))
 
-    async def async_step_confirm(self, user_input=None) -> data_entry_flow.FlowResult:
-        """Allow the user to confirm adding the device."""
-
-        _LOGGER.debug(self.message_format("entered, user_input: %s"), user_input)
-
-        if user_input is not None:
-            return await self.async_step_finish()
-
-        self._set_confirm_only()
-        return self.async_show_form(step_id=STEP_CONFIRM)
-
     async def async_step_details(self, user_input=None) -> data_entry_flow.FlowResult:
         """"""
 
@@ -156,6 +154,23 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, HDHomerunLogger, domain=DOM
 
         return self.async_create_entry(title=self._friendly_name or "HDHomerun", data=data)
 
+    async def async_step_friendly_name(self, user_input=None) -> data_entry_flow.FlowResult:
+        """"""
+
+        _LOGGER.debug(self.message_format("entered, user_input: %s"), user_input)
+
+        if user_input is not None:
+            self._friendly_name = user_input.get(CONF_FRIENDLY_NAME, "")
+            return await self.async_step_finish()
+
+        return self.async_show_form(
+            step_id=STEP_FRIENDLY_NAME,
+            data_schema=await _async_build_schema_with_user_input(
+                STEP_FRIENDLY_NAME,
+                {CONF_FRIENDLY_NAME: self._friendly_name}
+            ),
+        )
+
     async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> data_entry_flow.FlowResult:
         """"""
 
@@ -180,7 +195,7 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, HDHomerunLogger, domain=DOM
 
         self.context["title_placeholders"] = {"name": self._friendly_name}  # set the name of the flow
 
-        return await self.async_step_confirm()
+        return await self.async_step_friendly_name()
 
     async def async_step_user(self, user_input=None) -> data_entry_flow.FlowResult:
         """Handle a flow initiated by the user"""
