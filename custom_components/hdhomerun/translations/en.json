@@ -1,0 +1,28 @@
+{
+    "config": {
+        "abort": {
+            "abort_details": "Unable to gather the details.",
+            "already_configured": "Device is already configured."
+        },
+        "error": {
+            "client_response_error": "Error in response ({error_message})",
+            "connection_error": "Connection error.",
+            "invalid_serial": "Invalid serial number found ({error_message})"
+        },
+        "flow_title": "{name}",
+        "step": {
+            "confirm": {
+                "description": "Do you want to start set up?"
+            },
+            "user": {
+                "data": {
+                    "friendly_name": "Friendly name",
+                    "host": "Host"
+                },
+                "description": "Enter the address of a single HDHomerun device on the network",
+                "title": "Enter an address"
+            }
+        },
+        "title": "HDHomerun"
+    }
+}
