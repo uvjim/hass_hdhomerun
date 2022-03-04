@@ -14,6 +14,12 @@
             "confirm": {
                 "description": "Do you want to start set up?"
             },
+            "friendly_name": {
+                "data": {
+                    "friendly_name": "Friendly name"
+                },
+                "title": "Friendly name"
+            },
             "user": {
                 "data": {
                     "friendly_name": "Friendly name",
