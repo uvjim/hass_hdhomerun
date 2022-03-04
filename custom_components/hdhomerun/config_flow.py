@@ -4,20 +4,27 @@
 import asyncio
 import json
 import logging
-from typing import Optional
+from typing import (
+    Optional,
+    Union
+)
 from urllib.parse import urlparse
 
 import aiohttp
+import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant import (
     config_entries,
     data_entry_flow,
 )
 from homeassistant.components import ssdp
+from homeassistant.const import CONF_SCAN_INTERVAL
+from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
     CONF_HOST,
+    DEF_SCAN_INTERVAL_SECS,
     DOMAIN,
 )
 from .hdhomerun import (
@@ -26,7 +33,6 @@ from .hdhomerun import (
     HDHomeRunExceptionUnreachable,
 )
 from .logger import HDHomerunLogger
-
 # endregion
 
 
@@ -37,6 +43,7 @@ STEP_CONFIRM: str = "confirm"
 STEP_DETAILS: str = "details"
 STEP_FINISH: str = "finish"
 STEP_FRIENDLY_NAME: str = "friendly_name"
+STEP_OPTIONS: str = "options"
 STEP_USER: str = "user"
 
 
@@ -55,6 +62,14 @@ async def _async_build_schema_with_user_input(step: str, user_input: dict) -> vo
                 CONF_FRIENDLY_NAME,
                 default=user_input.get(CONF_FRIENDLY_NAME, "")
             ): str,
+        }
+
+    if step == STEP_OPTIONS:
+        schema = {
+            vol.Optional(
+                CONF_SCAN_INTERVAL,
+                default=user_input.get(CONF_SCAN_INTERVAL, DEF_SCAN_INTERVAL_SECS),
+            ): cv.positive_int,
         }
 
     if step == STEP_USER:
@@ -86,6 +101,13 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, HDHomerunLogger, domain=DOM
         self._host: str = ""
         self._serial: str = ""
         self._task_details: Optional[asyncio.Task] = None
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> config_entries.OptionsFlow:
+        """Get the options flow for this handler"""
+
+        return HDHomerunOptionsFlowHandler(config_entry=config_entry)
 
     async def _async_get_details(self) -> None:
         """"""
@@ -228,3 +250,40 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, HDHomerunLogger, domain=DOM
                 "error_message": self._error_message
             }
         )
+
+
+class HDHomerunOptionsFlowHandler(config_entries.OptionsFlow):
+    """"""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry):
+        """Constructor"""
+
+        super().__init__()
+        self._config_entry = config_entry
+        self._errors: dict = {}
+        self._options: dict = dict(config_entry.options)
+
+    async def async_step_init(self, _=None) -> data_entry_flow.FlowResult:
+        """"""
+
+        return await self.async_step_options()
+
+    async def async_step_options(self, user_input: Union[dict, None] = None) -> data_entry_flow.FlowResult:
+        """"""
+
+        if user_input is not None:
+            self._errors = {}
+            self._options.update(user_input)
+            return await self.async_step_finish(user_input=user_input)
+
+        return self.async_show_form(
+            step_id=STEP_OPTIONS,
+            data_schema=await _async_build_schema_with_user_input(STEP_OPTIONS, self._options),
+            errors=self._errors
+        )
+
+    # noinspection PyUnusedLocal
+    async def async_step_finish(self, user_input=None) -> data_entry_flow.FlowResult:
+        """"""
+
+        return self.async_create_entry(title=self._config_entry.title, data=self._options)
