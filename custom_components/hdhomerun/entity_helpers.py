@@ -1,6 +1,7 @@
 """"""
 
 # region #-- imports --#
+import logging
 from dataclasses import dataclass
 from typing import (
     Any,
@@ -21,14 +22,15 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
 
-from .const import (
-    DEF_DISCOVER,
-    DEF_DISCOVER_CURRENT_FIRMWARE,
-    DEF_DISCOVER_UPGRADE_FIRMWARE,
-    DEF_LINEUP,
-    DOMAIN,
+from .const import DOMAIN
+from .hdhomerun import (
+    HDHomeRunDevice,
 )
+
 # endregion
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 # region #-- Binary Sensors --#
@@ -42,8 +44,6 @@ class OptionalHDHomerunBinarySensorDescription:
 @dataclass
 class RequiredHDHomerunBinarySensorDescription:
     """Represent the required attributes of the sensor description."""
-
-    query_location: str
 
 
 @dataclass
@@ -60,8 +60,7 @@ BINARY_SENSORS: tuple[HDHomerunBinarySensorEntityDescription, ...] = (
         key="",
         name="Update available",
         device_class=BinarySensorDeviceClass.UPDATE,
-        query_location=DEF_DISCOVER,
-        state_value=lambda d: bool(d.get(DEF_DISCOVER_UPGRADE_FIRMWARE)),
+        state_value=lambda d: bool(d.latest_firmware),
     ),
 )
 # endregion
@@ -71,8 +70,6 @@ BINARY_SENSORS: tuple[HDHomerunBinarySensorEntityDescription, ...] = (
 @dataclass
 class RequiredHDHomerunSensorDescription:
     """Represent the required attributes of the sensor description."""
-
-    query_location: str
 
 
 @dataclass
@@ -94,26 +91,22 @@ class HDHomerunSensorEntityDescription(
 
 SENSORS: tuple[HDHomerunSensorEntityDescription, ...] = (
     HDHomerunSensorEntityDescription(
-        query_location=DEF_LINEUP,
-        key="",
+        key="channels",
         name="Channel Count",
         state_value=lambda d: len(d)
     ),
     HDHomerunSensorEntityDescription(
-        query_location=DEF_DISCOVER,
-        key=DEF_DISCOVER_CURRENT_FIRMWARE,
+        key="current_firmware",
         name="Version",
     ),
     HDHomerunSensorEntityDescription(
-        query_location=DEF_DISCOVER,
-        key="TunerCount",
+        key="tuner_count",
         name="Tuner Count",
     ),
     HDHomerunSensorEntityDescription(
-        query_location=DEF_DISCOVER,
         key="",
         name="Newest Version",
-        state_value=lambda d: d.get(DEF_DISCOVER_UPGRADE_FIRMWARE, d.get(DEF_DISCOVER_CURRENT_FIRMWARE))
+        state_value=lambda d: d.latest_firmware or d.current_firmware
     ),
 )
 
@@ -122,25 +115,23 @@ class HDHomerunEntity(CoordinatorEntity):
     """"""
 
     def __init__(self, coordinator: DataUpdateCoordinator, config_entry: ConfigEntry) -> None:
-        """Initialize a Pi-hole entity."""
+        """Initialize the entity"""
+
         super().__init__(coordinator)
         self._config: ConfigEntry = config_entry
+        self._data: HDHomeRunDevice = self.coordinator.data
 
     @property
     def device_info(self) -> DeviceInfo:
         """Return the device information of the entity."""
-
-        discover_data: dict = {}
-        if self.coordinator.data:
-            discover_data = self.coordinator.data.get(DEF_DISCOVER, {})
 
         # noinspection HttpUrlsUsage
         return DeviceInfo(
             configuration_url=f"http://{self._config.data.get('host')}",
             identifiers={(DOMAIN, self._config.unique_id)},
             manufacturer="SiliconDust",
-            model=discover_data.get("ModelNumber"),
+            model=self._data.model if self._data else "",
             name=self._config.title,
-            sw_version=discover_data.get(DEF_DISCOVER_CURRENT_FIRMWARE),
+            sw_version=self._data.current_firmware if self._data else "",
         )
 # endregion

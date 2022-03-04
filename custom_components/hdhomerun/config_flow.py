@@ -7,9 +7,7 @@ import logging
 from typing import Optional
 from urllib.parse import urlparse
 
-import aiohttp.client_exceptions
-from aiohttp import ClientSession
-
+import aiohttp
 import voluptuous as vol
 from homeassistant import (
     config_entries,
@@ -20,8 +18,12 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
     CONF_HOST,
-    DEF_DISCOVER,
     DOMAIN,
+)
+from .hdhomerun import (
+    HDHomeRunDevice,
+    HDHomeRunExceptionOldFirmware,
+    HDHomeRunExceptionUnreachable,
 )
 from .logger import HDHomerunLogger
 
@@ -89,26 +91,29 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, HDHomerunLogger, domain=DOM
         """"""
 
         _LOGGER.debug(self.message_format("entered"))
-        session: ClientSession = async_get_clientsession(hass=self.hass)
+
+        hdhomerun_device = HDHomeRunDevice(
+            host=self._host,
+            loop=self.hass.loop,
+            session=async_get_clientsession(hass=self.hass),
+        )
         try:
-            # noinspection HttpUrlsUsage
-            async with session.get(f"http://{self._host}/{DEF_DISCOVER}", raise_for_status=True) as resp:
-                json_details: dict = await resp.json()
-        except OSError as err:
-            if err.errno == 113:
-                self._errors["base"] = "connection_error"
-        except aiohttp.client_exceptions.ClientResponseError as err:
-            self._errors["base"] = "client_response_error"
-            self._error_message = f"{err.status} - {err.message}"
+            await hdhomerun_device.get_details(include_discover=True, include_tuner_status=True)
+        except aiohttp.ClientConnectorError:
+            self._errors["base"] = "connection_error"
+        except HDHomeRunExceptionUnreachable:
+            self._errors["base"] = "connection_error"
+        except HDHomeRunExceptionOldFirmware as err:
+            _LOGGER.warning(self.message_format("%s"), err)
         except Exception as err:
-            self._errors["base"] = str(err)
-            _LOGGER.debug(self.message_format("%s"), err)
+            self._errors["base"] = "client_response_error"
+            self._error_message = str(err)
+            _LOGGER.error(self.message_format("%s --> %s"), type(err), err)
         else:
             await asyncio.sleep(1)
-            _LOGGER.debug(self.message_format("json_details: %s"), json_details)
             if not self._friendly_name:
-                self._friendly_name = f"{json_details.get('FriendlyName', '')} {json_details.get('DeviceID', '')}"
-            self._serial = json_details.get("DeviceID", "")
+                self._friendly_name = f"{hdhomerun_device.friendly_name} {hdhomerun_device.serial}"
+            self._serial = hdhomerun_device.serial
 
             # region #-- raise errors with response --#
             if not self._serial:

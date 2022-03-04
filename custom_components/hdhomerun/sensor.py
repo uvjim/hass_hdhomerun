@@ -6,10 +6,7 @@ from datetime import (
     datetime,
 )
 from typing import (
-    Any,
     List,
-    Mapping,
-    Optional,
     Union,
 )
 
@@ -30,6 +27,8 @@ from .entity_helpers import (
     HDHomerunSensorEntityDescription,
     SENSORS,
 )
+
+
 # endregion
 
 
@@ -51,7 +50,7 @@ async def async_setup_entry(
         for description in SENSORS
     ]
 
-    async_add_entities(sensors, update_before_add=True)
+    async_add_entities(sensors)
 
 
 class HDHomerunSensor(HDHomerunEntity, SensorEntity):
@@ -74,31 +73,17 @@ class HDHomerunSensor(HDHomerunEntity, SensorEntity):
 
     # region #-- properties --#
     @property
-    def extra_state_attributes(self) -> Optional[Mapping[str, Any]]:
-        """"""
-
-        if self.entity_description.extra_state_attributes:
-            if self.coordinator.data:
-                data = self.coordinator.data.get(self.entity_description.query_location)
-                return self.entity_description.extra_state_attributes(data)
-            else:
-                return None
-        else:
-            return None
-
-    @property
     def native_value(self) -> Union[StateType, date, datetime]:
         """"""
 
-        if self.coordinator.data:
-            data = self.coordinator.data.get(self.entity_description.query_location)
-            if data:
-                if self.entity_description.state_value:
-                    return self.entity_description.state_value(data)
+        if self._data:
+            if self.entity_description.state_value:
+                if self.entity_description.key:
+                    return self.entity_description.state_value(getattr(self._data, self.entity_description.key, None))
                 else:
-                    return data.get(self.entity_description.key)
+                    return self.entity_description.state_value(self._data)
             else:
-                return None
+                return getattr(self._data, self.entity_description.key, None)
         else:
             return None
     # endregion
