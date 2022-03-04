@@ -13,7 +13,7 @@ import aiohttp
 from aiohttp import ClientSession
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryNotReady, IntegrationError
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
@@ -21,8 +21,10 @@ from .const import (
     CONF_DATA_COORDINATOR,
     CONF_HOST,
     DEF_DISCOVER,
+    DEF_DISCOVER_CURRENT_FIRMWARE,
     DEF_LINEUP,
     DEF_TUNER_STATUS,
+    DEF_TUNER_STATUS_MIN_FIRMWARE,
     DOMAIN,
     PLATFORMS,
 )
@@ -56,33 +58,47 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
             urls = [
                 DEF_DISCOVER,
                 DEF_LINEUP,
+                DEF_TUNER_STATUS,
             ]
 
         session: ClientSession = async_get_clientsession(hass=hass)
         tasks: List[asyncio.Task] = []
 
-        try:
-            for url in urls:
-                # noinspection HttpUrlsUsage
-                tasks.append(
-                    asyncio.ensure_future(
-                        loop=hass.loop,
-                        coro_or_future=session.get(
-                            f"http://{config_entry.data.get(CONF_HOST)}/{url}",
-                            raise_for_status=True
-                        )
-                    )
+        for url in urls:
+            # noinspection HttpUrlsUsage
+            tasks.append(
+                asyncio.ensure_future(
+                    loop=hass.loop,
+                    coro_or_future=session.get(f"http://{config_entry.data.get(CONF_HOST)}/{url}")
                 )
-            results = await asyncio.gather(*tasks)
-            result: aiohttp.ClientResponse
-            ret: dict = {}
-            # region #-- build the return --#
-            for result in results:
-                ret[result.url.name] = await result.json()
-            # endregion
-        except Exception as exc:
-            _LOGGER.debug(log_formatter.message_format("%s"), exc)
-            raise exc from None
+            )
+        results = await asyncio.gather(*tasks)
+        result: aiohttp.ClientResponse
+        ret: dict = {}
+
+        # region #-- build response --#
+        r: aiohttp.ClientResponse
+        for result in [r for r in results if r.ok]:
+            ret[result.url.name] = await result.json()
+        # endregion
+
+        # region #-- check for errors --#
+        url_errors = [result for result in results if not result.ok]
+        if len(url_errors) == len(urls):
+            raise IntegrationError("No successful response from the device")
+        elif len(url_errors):
+            for url_err in url_errors:
+                msg: str = ""
+                if url_err.url.name == DEF_DISCOVER:
+                    msg = f"Unable to retrieve information about the device."
+                if url_err.url.name == DEF_LINEUP:
+                    msg = f"Unable to currently tuned channels."
+                if url_err.url.name == DEF_TUNER_STATUS:
+                    current_firmware = ret.get(DEF_DISCOVER, {}).get(DEF_DISCOVER_CURRENT_FIRMWARE)
+                    msg = f"Unable to retrieve tuner information. Your current firmware level is: {current_firmware}." \
+                          f" Support was added in {DEF_TUNER_STATUS_MIN_FIRMWARE}."
+                _LOGGER.warning(log_formatter.message_format(msg))
+        # endregion
 
         return ret
 
@@ -100,7 +116,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         update_interval=timedelta(minutes=5),
     )
     hass.data[DOMAIN][config_entry.entry_id] = {CONF_DATA_COORDINATOR: coordinator}
-    await coordinator.async_config_entry_first_refresh()
     # endregion
 
     # region #-- setup the platforms --#

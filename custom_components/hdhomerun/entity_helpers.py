@@ -23,6 +23,8 @@ from homeassistant.helpers.update_coordinator import (
 
 from .const import (
     DEF_DISCOVER,
+    DEF_DISCOVER_CURRENT_FIRMWARE,
+    DEF_DISCOVER_UPGRADE_FIRMWARE,
     DEF_LINEUP,
     DOMAIN,
 )
@@ -59,7 +61,7 @@ BINARY_SENSORS: tuple[HDHomerunBinarySensorEntityDescription, ...] = (
         name="Update available",
         device_class=BinarySensorDeviceClass.UPDATE,
         query_location=DEF_DISCOVER,
-        state_value=lambda d: bool(d.get("UpgradeAvailable")),
+        state_value=lambda d: bool(d.get(DEF_DISCOVER_UPGRADE_FIRMWARE)),
     ),
 )
 # endregion
@@ -99,7 +101,7 @@ SENSORS: tuple[HDHomerunSensorEntityDescription, ...] = (
     ),
     HDHomerunSensorEntityDescription(
         query_location=DEF_DISCOVER,
-        key="FirmwareVersion",
+        key=DEF_DISCOVER_CURRENT_FIRMWARE,
         name="Version",
     ),
     HDHomerunSensorEntityDescription(
@@ -111,7 +113,7 @@ SENSORS: tuple[HDHomerunSensorEntityDescription, ...] = (
         query_location=DEF_DISCOVER,
         key="",
         name="Newest Version",
-        state_value=lambda d: d.get("UpgradeAvailable", d.get("FirmwareVersion"))
+        state_value=lambda d: d.get(DEF_DISCOVER_UPGRADE_FIRMWARE, d.get(DEF_DISCOVER_CURRENT_FIRMWARE))
     ),
 )
 
@@ -139,6 +141,6 @@ class HDHomerunEntity(CoordinatorEntity):
             manufacturer="SiliconDust",
             model=discover_data.get("ModelNumber"),
             name=self._config.title,
-            sw_version=discover_data.get("FirmwareVersion"),
+            sw_version=discover_data.get(DEF_DISCOVER_CURRENT_FIRMWARE),
         )
 # endregion

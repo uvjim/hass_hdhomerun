@@ -14,6 +14,10 @@ CONF_HOST: str = "host"
 DEF_DISCOVER: str = "discover.json"
 DEF_LINEUP: str = "lineup.json"
 DEF_TUNER_STATUS: str = "status.json"
+DEF_TUNER_STATUS_MIN_FIRMWARE: int = 20190417
+
+DEF_DISCOVER_CURRENT_FIRMWARE: str = "FirmwareVersion"
+DEF_DISCOVER_UPGRADE_FIRMWARE: str = "UpgradeAvailable"
 
 PLATFORMS = [
     BINARY_SENSOR_DOMAIN,
