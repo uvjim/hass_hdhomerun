@@ -84,3 +84,19 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     _LOGGER.debug(log_formatter.message_format("exited"))
     return True
+
+
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Cleanup when unloading a config entry"""
+
+    # region #-- clean up the platforms --#
+    setup_platforms: List[str] = list(filter(None, PLATFORMS))
+    ret = await hass.config_entries.async_unload_platforms(config_entry, setup_platforms)
+    if ret:
+        hass.data[DOMAIN].pop(config_entry.entry_id)
+        ret = True
+    else:
+        ret = False
+    # endregion
+
+    return ret
