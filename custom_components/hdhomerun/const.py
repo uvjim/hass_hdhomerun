@@ -8,6 +8,8 @@ from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 DOMAIN: str = "hdhomerun"
 ENTITY_SLUG: str = "HDHomeRun"
 
+DEF_SCAN_INTERVAL_SECS: int = 300
+
 CONF_DATA_COORDINATOR: str = "data_coordinator"
 CONF_HOST: str = "host"
 

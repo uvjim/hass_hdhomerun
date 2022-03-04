@@ -24,5 +24,14 @@
             }
         },
         "title": "HDHomerun"
+    },
+    "options": {
+        "step": {
+            "options": {
+                "data": {
+                    "scan_interval": "Scan interval (in seconds)"
+                }
+            }
+        }
     }
 }
