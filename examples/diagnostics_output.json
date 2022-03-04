@@ -1,0 +1,1273 @@
+{
+  "home_assistant": {
+    "installation_type": "Home Assistant Core",
+    "version": "2022.2.5",
+    "dev": false,
+    "hassio": false,
+    "virtualenv": true,
+    "python_version": "3.9.2",
+    "docker": false,
+    "arch": "aarch64",
+    "timezone": "UTC",
+    "os_name": "Linux",
+    "os_version": "5.10.92-v8+",
+    "run_as_root": false
+  },
+  "custom_components": {
+    "linksys_velop": {
+      "version": "2022.2.2",
+      "requirements": [
+        "pyvelop==2022.2.6"
+      ]
+    },
+    "virginmedia_tv": {
+      "version": "2021.11.1",
+      "requirements": [
+        "beautifulsoup4"
+      ]
+    },
+    "hdhomerun": {
+      "version": "2022.3.1",
+      "requirements": []
+    }
+  },
+  "integration_manifest": {
+    "codeowners": [
+      "@uvjim"
+    ],
+    "config_flow": true,
+    "dependencies": [
+      "ssdp"
+    ],
+    "domain": "hdhomerun",
+    "documentation": "https://github.com/uvjim/hass_hdhomerun",
+    "iot_class": "local_polling",
+    "issue_tracker": "https://github.com/uvjim/hass_hdhomerun/issues",
+    "name": "HDHomerun",
+    "requirements": [],
+    "ssdp": [
+      {
+        "st": "urn:schemas-upnp-org:device:MediaServer:1",
+        "manufacturer": "Silicondust"
+      }
+    ],
+    "version": "2022.3.1",
+    "is_built_in": false
+  },
+  "data": {
+    "discover.json": {
+      "FriendlyName": "HDHomeRun CONNECT QUATRO",
+      "ModelNumber": "HDHR5-4DT",
+      "FirmwareName": "hdhomerun5_dvbt",
+      "FirmwareVersion": "20220203",
+      "DeviceID": "1251129F",
+      "DeviceAuth": "**REDACTED**",
+      "BaseURL": "http://192.168.123.10:80",
+      "LineupURL": "http://192.168.123.10:80/lineup.json",
+      "TunerCount": 4
+    },
+    "lineup.json": [
+      {
+        "GuideNumber": "1",
+        "GuideName": "BBC ONE W Mid",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v1"
+      },
+      {
+        "GuideNumber": "2",
+        "GuideName": "BBC TWO",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v2"
+      },
+      {
+        "GuideNumber": "3",
+        "GuideName": "ITV",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v3"
+      },
+      {
+        "GuideNumber": "4",
+        "GuideName": "Channel 4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v4"
+      },
+      {
+        "GuideNumber": "5",
+        "GuideName": "Channel 5",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5"
+      },
+      {
+        "GuideNumber": "6",
+        "GuideName": "ITV2",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v6"
+      },
+      {
+        "GuideNumber": "7",
+        "GuideName": "Birmingham TV",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v7"
+      },
+      {
+        "GuideNumber": "9",
+        "GuideName": "BBC FOUR",
+        "URL": "http://192.168.123.10:5004/auto/v9"
+      },
+      {
+        "GuideNumber": "10",
+        "GuideName": "ITV3",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v10"
+      },
+      {
+        "GuideNumber": "11",
+        "GuideName": "Sky Arts",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v11"
+      },
+      {
+        "GuideNumber": "12",
+        "GuideName": "QUEST",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v12"
+      },
+      {
+        "GuideNumber": "13",
+        "GuideName": "E4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v13"
+      },
+      {
+        "GuideNumber": "14",
+        "GuideName": "Film4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v14"
+      },
+      {
+        "GuideNumber": "15",
+        "GuideName": "Channel 4+1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v15"
+      },
+      {
+        "GuideNumber": "16",
+        "GuideName": "QVC",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v16"
+      },
+      {
+        "GuideNumber": "17",
+        "GuideName": "Really",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v17"
+      },
+      {
+        "GuideNumber": "18",
+        "GuideName": "More 4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v18"
+      },
+      {
+        "GuideNumber": "19",
+        "GuideName": "Dave",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v19"
+      },
+      {
+        "GuideNumber": "20",
+        "GuideName": "Drama",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v20"
+      },
+      {
+        "GuideNumber": "21",
+        "GuideName": "5 USA",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v21"
+      },
+      {
+        "GuideNumber": "22",
+        "GuideName": "TJC",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v22"
+      },
+      {
+        "GuideNumber": "23",
+        "GuideName": "BBC THREE",
+        "URL": "http://192.168.123.10:5004/auto/v23"
+      },
+      {
+        "GuideNumber": "25",
+        "GuideName": "Dave ja vu",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v25"
+      },
+      {
+        "GuideNumber": "26",
+        "GuideName": "ITV4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v26"
+      },
+      {
+        "GuideNumber": "27",
+        "GuideName": "Yesterday",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v27"
+      },
+      {
+        "GuideNumber": "28",
+        "GuideName": "ITVBe",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v28"
+      },
+      {
+        "GuideNumber": "29",
+        "GuideName": "ITV2 +1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v29"
+      },
+      {
+        "GuideNumber": "30",
+        "GuideName": "E4+1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v30"
+      },
+      {
+        "GuideNumber": "31",
+        "GuideName": "4Music",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v31"
+      },
+      {
+        "GuideNumber": "32",
+        "GuideName": "5STAR",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v32"
+      },
+      {
+        "GuideNumber": "33",
+        "GuideName": "5ACTION",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v33"
+      },
+      {
+        "GuideNumber": "34",
+        "GuideName": "GREAT! movies",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v34"
+      },
+      {
+        "GuideNumber": "35",
+        "GuideName": "ITV +1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v35"
+      },
+      {
+        "GuideNumber": "36",
+        "GuideName": "Pick",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v36"
+      },
+      {
+        "GuideNumber": "37",
+        "GuideName": "QVC Beauty",
+        "URL": "http://192.168.123.10:5004/auto/v37"
+      },
+      {
+        "GuideNumber": "38",
+        "GuideName": "QVC Style",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v38"
+      },
+      {
+        "GuideNumber": "39",
+        "GuideName": "DMAX",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v39"
+      },
+      {
+        "GuideNumber": "40",
+        "GuideName": "Quest Red",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v40"
+      },
+      {
+        "GuideNumber": "41",
+        "GuideName": "CBS Justice",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v41"
+      },
+      {
+        "GuideNumber": "42",
+        "GuideName": "GREAT! movies a",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v42"
+      },
+      {
+        "GuideNumber": "43",
+        "GuideName": "Food Network",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v43"
+      },
+      {
+        "GuideNumber": "44",
+        "GuideName": "HGTV",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v44"
+      },
+      {
+        "GuideNumber": "45",
+        "GuideName": "Gems TV",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v45"
+      },
+      {
+        "GuideNumber": "46",
+        "GuideName": "Channel 5+1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v46"
+      },
+      {
+        "GuideNumber": "47",
+        "GuideName": "Film4+1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v47"
+      },
+      {
+        "GuideNumber": "48",
+        "GuideName": "Challenge",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v48"
+      },
+      {
+        "GuideNumber": "49",
+        "GuideName": "4seven",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v49"
+      },
+      {
+        "GuideNumber": "50",
+        "GuideName": "GREAT! tv",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v50"
+      },
+      {
+        "GuideNumber": "51",
+        "GuideName": "Ideal World",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v51"
+      },
+      {
+        "GuideNumber": "52",
+        "GuideName": "GREAT! movies c",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v52"
+      },
+      {
+        "GuideNumber": "55",
+        "GuideName": "5SELECT",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v55"
+      },
+      {
+        "GuideNumber": "56",
+        "GuideName": "5SELECT",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v56"
+      },
+      {
+        "GuideNumber": "57",
+        "GuideName": "Smithsonian Cha",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v57"
+      },
+      {
+        "GuideNumber": "58",
+        "GuideName": "ITVBe+1",
+        "URL": "http://192.168.123.10:5004/auto/v58"
+      },
+      {
+        "GuideNumber": "59",
+        "GuideName": "ITV3+1",
+        "URL": "http://192.168.123.10:5004/auto/v59"
+      },
+      {
+        "GuideNumber": "60",
+        "GuideName": "ITV4+1",
+        "URL": "http://192.168.123.10:5004/auto/v60"
+      },
+      {
+        "GuideNumber": "61",
+        "GuideName": "GREAT! movies +",
+        "URL": "http://192.168.123.10:5004/auto/v61"
+      },
+      {
+        "GuideNumber": "63",
+        "GuideName": "Blaze",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v63"
+      },
+      {
+        "GuideNumber": "64",
+        "GuideName": "Blaze",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v64"
+      },
+      {
+        "GuideNumber": "65",
+        "GuideName": "FreeSports",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v65"
+      },
+      {
+        "GuideNumber": "66",
+        "GuideName": "TBN UK",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v66"
+      },
+      {
+        "GuideNumber": "67",
+        "GuideName": "CBS Reality",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v67"
+      },
+      {
+        "GuideNumber": "68",
+        "GuideName": "CBS Drama",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v68"
+      },
+      {
+        "GuideNumber": "69",
+        "GuideName": "Horror Channel",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v69"
+      },
+      {
+        "GuideNumber": "70",
+        "GuideName": "QUEST+1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v70"
+      },
+      {
+        "GuideNumber": "71",
+        "GuideName": "Quest Red+1",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v71"
+      },
+      {
+        "GuideNumber": "72",
+        "GuideName": "Jewellery Maker",
+        "URL": "http://192.168.123.10:5004/auto/v72"
+      },
+      {
+        "GuideNumber": "73",
+        "GuideName": "HobbyMaker",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v73"
+      },
+      {
+        "GuideNumber": "74",
+        "GuideName": "Drama +1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v74"
+      },
+      {
+        "GuideNumber": "75",
+        "GuideName": "Yesterday+1",
+        "URL": "http://192.168.123.10:5004/auto/v75"
+      },
+      {
+        "GuideNumber": "76",
+        "GuideName": "NOW 80s",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v76"
+      },
+      {
+        "GuideNumber": "77",
+        "GuideName": "NOW 80s",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v77"
+      },
+      {
+        "GuideNumber": "78",
+        "GuideName": "TCC",
+        "URL": "http://192.168.123.10:5004/auto/v78"
+      },
+      {
+        "GuideNumber": "79",
+        "GuideName": "Dave ja vu",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v79"
+      },
+      {
+        "GuideNumber": "80",
+        "GuideName": "Blaze+1",
+        "URL": "http://192.168.123.10:5004/auto/v80"
+      },
+      {
+        "GuideNumber": "81",
+        "GuideName": "Blaze+1",
+        "URL": "http://192.168.123.10:5004/auto/v81"
+      },
+      {
+        "GuideNumber": "82",
+        "GuideName": "TalkingPictures",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v82"
+      },
+      {
+        "GuideNumber": "83",
+        "GuideName": "Together TV",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v83"
+      },
+      {
+        "GuideNumber": "84",
+        "GuideName": "PBS America",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v84"
+      },
+      {
+        "GuideNumber": "85",
+        "GuideName": "Create & Craft",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v85"
+      },
+      {
+        "GuideNumber": "86",
+        "GuideName": "More4+1",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v86"
+      },
+      {
+        "GuideNumber": "87",
+        "GuideName": "PBS America +1",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v87"
+      },
+      {
+        "GuideNumber": "88",
+        "GuideName": "Together TV+1",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v88"
+      },
+      {
+        "GuideNumber": "89",
+        "GuideName": "Court TV",
+        "URL": "http://192.168.123.10:5004/auto/v89"
+      },
+      {
+        "GuideNumber": "91",
+        "GuideName": "That's TV (UK)",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v91"
+      },
+      {
+        "GuideNumber": "93",
+        "GuideName": "PBS America +1",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v93"
+      },
+      {
+        "GuideNumber": "94",
+        "GuideName": "Ideal Extra",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v94"
+      },
+      {
+        "GuideNumber": "95",
+        "GuideName": "Craft Extra",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v95"
+      },
+      {
+        "GuideNumber": "96",
+        "GuideName": "Forces TV",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v96"
+      },
+      {
+        "GuideNumber": "100",
+        "GuideName": "Freeview",
+        "URL": "http://192.168.123.10:5004/auto/v100"
+      },
+      {
+        "GuideNumber": "101",
+        "GuideName": "BBC ONE HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v101"
+      },
+      {
+        "GuideNumber": "102",
+        "GuideName": "BBC TWO HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v102"
+      },
+      {
+        "GuideNumber": "103",
+        "GuideName": "ITV HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v103"
+      },
+      {
+        "GuideNumber": "104",
+        "GuideName": "Channel 4 HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v104"
+      },
+      {
+        "GuideNumber": "105",
+        "GuideName": "Channel 5 HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v105"
+      },
+      {
+        "GuideNumber": "106",
+        "GuideName": "BBC FOUR HD",
+        "URL": "http://192.168.123.10:5004/auto/v106"
+      },
+      {
+        "GuideNumber": "107",
+        "GuideName": "BBC NEWS HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v107"
+      },
+      {
+        "GuideNumber": "109",
+        "GuideName": "BBC THREE HD",
+        "URL": "http://192.168.123.10:5004/auto/v109"
+      },
+      {
+        "GuideNumber": "111",
+        "GuideName": "QVC HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v111"
+      },
+      {
+        "GuideNumber": "112",
+        "GuideName": "QVC Beauty HD",
+        "URL": "http://192.168.123.10:5004/auto/v112"
+      },
+      {
+        "GuideNumber": "113",
+        "GuideName": "RT HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v113"
+      },
+      {
+        "GuideNumber": "114",
+        "GuideName": "QUEST HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v114"
+      },
+      {
+        "GuideNumber": "201",
+        "GuideName": "CBBC",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v201"
+      },
+      {
+        "GuideNumber": "202",
+        "GuideName": "CBeebies",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v202"
+      },
+      {
+        "GuideNumber": "203",
+        "GuideName": "CITV",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v203"
+      },
+      {
+        "GuideNumber": "204",
+        "GuideName": "CBBC HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v204"
+      },
+      {
+        "GuideNumber": "205",
+        "GuideName": "CBeebies HD",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v205"
+      },
+      {
+        "GuideNumber": "206",
+        "GuideName": "POP",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v206"
+      },
+      {
+        "GuideNumber": "207",
+        "GuideName": "Tiny Pop",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v207"
+      },
+      {
+        "GuideNumber": "211",
+        "GuideName": "Ketchup TV",
+        "URL": "http://192.168.123.10:5004/auto/v211"
+      },
+      {
+        "GuideNumber": "212",
+        "GuideName": "YAAAS!",
+        "URL": "http://192.168.123.10:5004/auto/v212"
+      },
+      {
+        "GuideNumber": "231",
+        "GuideName": "BBC NEWS",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v231"
+      },
+      {
+        "GuideNumber": "232",
+        "GuideName": "BBC Parliament",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v232"
+      },
+      {
+        "GuideNumber": "233",
+        "GuideName": "Sky News",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v233"
+      },
+      {
+        "GuideNumber": "234",
+        "GuideName": "RT",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v234"
+      },
+      {
+        "GuideNumber": "235",
+        "GuideName": "Al Jazeera Eng",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v235"
+      },
+      {
+        "GuideNumber": "236",
+        "GuideName": "GB News",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v236"
+      },
+      {
+        "GuideNumber": "250",
+        "GuideName": "BBC Red Button",
+        "URL": "http://192.168.123.10:5004/auto/v250"
+      },
+      {
+        "GuideNumber": "251",
+        "GuideName": "365 Travel",
+        "URL": "http://192.168.123.10:5004/auto/v251"
+      },
+      {
+        "GuideNumber": "252",
+        "GuideName": "Kiss Chat & Dat",
+        "URL": "http://192.168.123.10:5004/auto/v252"
+      },
+      {
+        "GuideNumber": "253",
+        "GuideName": "Proud Dating",
+        "URL": "http://192.168.123.10:5004/auto/v253"
+      },
+      {
+        "GuideNumber": "261",
+        "GuideName": "Racing TV",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "AC3",
+        "URL": "http://192.168.123.10:5004/auto/v261"
+      },
+      {
+        "GuideNumber": "263",
+        "GuideName": "Sonlife",
+        "URL": "http://192.168.123.10:5004/auto/v263"
+      },
+      {
+        "GuideNumber": "264",
+        "GuideName": "VisionTV",
+        "URL": "http://192.168.123.10:5004/auto/v264"
+      },
+      {
+        "GuideNumber": "265",
+        "GuideName": "On Demand 365",
+        "URL": "http://192.168.123.10:5004/auto/v265"
+      },
+      {
+        "GuideNumber": "269",
+        "GuideName": "Arise News",
+        "URL": "http://192.168.123.10:5004/auto/v269"
+      },
+      {
+        "GuideNumber": "271",
+        "GuideName": "Channelbox",
+        "URL": "http://192.168.123.10:5004/auto/v271"
+      },
+      {
+        "GuideNumber": "555",
+        "GuideName": "Accessible TV G",
+        "URL": "http://192.168.123.10:5004/auto/v555"
+      },
+      {
+        "GuideNumber": "601",
+        "GuideName": "BBC RB 1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v601"
+      },
+      {
+        "GuideNumber": "670",
+        "GuideName": "ADULT Section",
+        "URL": "http://192.168.123.10:5004/auto/v670"
+      },
+      {
+        "GuideNumber": "673",
+        "GuideName": "ADULT smileTV3",
+        "URL": "http://192.168.123.10:5004/auto/v673"
+      },
+      {
+        "GuideNumber": "674",
+        "GuideName": "ADULT Babestn",
+        "URL": "http://192.168.123.10:5004/auto/v674"
+      },
+      {
+        "GuideNumber": "678",
+        "GuideName": "ADULT Xpanded T",
+        "URL": "http://192.168.123.10:5004/auto/v678"
+      },
+      {
+        "GuideNumber": "679",
+        "GuideName": "ADULT Studio 66",
+        "URL": "http://192.168.123.10:5004/auto/v679"
+      },
+      {
+        "GuideNumber": "680",
+        "GuideName": "ADULT Xpanded2",
+        "URL": "http://192.168.123.10:5004/auto/v680"
+      },
+      {
+        "GuideNumber": "699",
+        "GuideName": "ADULT Section",
+        "URL": "http://192.168.123.10:5004/auto/v699"
+      },
+      {
+        "GuideNumber": "700",
+        "GuideName": "BBC Radio 1",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v700"
+      },
+      {
+        "GuideNumber": "701",
+        "GuideName": "BBC R1X",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v701"
+      },
+      {
+        "GuideNumber": "702",
+        "GuideName": "BBC Radio 2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v702"
+      },
+      {
+        "GuideNumber": "703",
+        "GuideName": "BBC Radio 3",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v703"
+      },
+      {
+        "GuideNumber": "704",
+        "GuideName": "BBC Radio 4",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v704"
+      },
+      {
+        "GuideNumber": "705",
+        "GuideName": "BBC R5L",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v705"
+      },
+      {
+        "GuideNumber": "706",
+        "GuideName": "BBC R5SX",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v706"
+      },
+      {
+        "GuideNumber": "707",
+        "GuideName": "BBC 6 Music",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v707"
+      },
+      {
+        "GuideNumber": "708",
+        "GuideName": "BBC Radio 4 Ex",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v708"
+      },
+      {
+        "GuideNumber": "709",
+        "GuideName": "BBC Asian Net.",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v709"
+      },
+      {
+        "GuideNumber": "710",
+        "GuideName": "BBC World Sv.",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v710"
+      },
+      {
+        "GuideNumber": "711",
+        "GuideName": "Hits Radio",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v711"
+      },
+      {
+        "GuideNumber": "712",
+        "GuideName": "KISS FRESH",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v712"
+      },
+      {
+        "GuideNumber": "713",
+        "GuideName": "KISS",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v713"
+      },
+      {
+        "GuideNumber": "714",
+        "GuideName": "KISSTORY",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v714"
+      },
+      {
+        "GuideNumber": "715",
+        "GuideName": "Magic",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v715"
+      },
+      {
+        "GuideNumber": "716",
+        "GuideName": "Greatest Hits R",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v716"
+      },
+      {
+        "GuideNumber": "717",
+        "GuideName": "Kerrang!",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v717"
+      },
+      {
+        "GuideNumber": "718",
+        "GuideName": "Smooth Radio",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v718"
+      },
+      {
+        "GuideNumber": "719",
+        "GuideName": "BBC CWR",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v719"
+      },
+      {
+        "GuideNumber": "720",
+        "GuideName": "BBC H&W",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v720"
+      },
+      {
+        "GuideNumber": "722",
+        "GuideName": "BBC WM",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v722"
+      },
+      {
+        "GuideNumber": "723",
+        "GuideName": "talkSPORT",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v723"
+      },
+      {
+        "GuideNumber": "724",
+        "GuideName": "Capital",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v724"
+      },
+      {
+        "GuideNumber": "725",
+        "GuideName": "Premier Radio",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v725"
+      },
+      {
+        "GuideNumber": "726",
+        "GuideName": "BBC Stoke",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v726"
+      },
+      {
+        "GuideNumber": "727",
+        "GuideName": "Absolute Radio",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v727"
+      },
+      {
+        "GuideNumber": "728",
+        "GuideName": "Heart",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v728"
+      },
+      {
+        "GuideNumber": "730",
+        "GuideName": "RNIB Connect",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v730"
+      },
+      {
+        "GuideNumber": "731",
+        "GuideName": "Classic FM",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v731"
+      },
+      {
+        "GuideNumber": "732",
+        "GuideName": "LBC",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v732"
+      },
+      {
+        "GuideNumber": "733",
+        "GuideName": "Trans World Rad",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v733"
+      },
+      {
+        "GuideNumber": "735",
+        "GuideName": "BBC Derby",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v735"
+      },
+      {
+        "GuideNumber": "790",
+        "GuideName": "5SELECT",
+        "URL": "http://192.168.123.10:5004/auto/v790"
+      },
+      {
+        "GuideNumber": "795",
+        "GuideName": "Arqiva Test Cha",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "AC3",
+        "URL": "http://192.168.123.10:5004/auto/v795"
+      },
+      {
+        "GuideNumber": "5000",
+        "GuideName": "ITV",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5000"
+      },
+      {
+        "GuideNumber": "5001",
+        "GuideName": "ITV3",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5001"
+      },
+      {
+        "GuideNumber": "5002",
+        "GuideName": "ITV +1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5002"
+      },
+      {
+        "GuideNumber": "5003",
+        "GuideName": "Channel 4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5003"
+      },
+      {
+        "GuideNumber": "5004",
+        "GuideName": "Film4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5004"
+      },
+      {
+        "GuideNumber": "5005",
+        "GuideName": "More 4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5005"
+      },
+      {
+        "GuideNumber": "5006",
+        "GuideName": "E4",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5006"
+      },
+      {
+        "GuideNumber": "5007",
+        "GuideName": "Channel 4+1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v5007"
+      },
+      {
+        "GuideNumber": "5008",
+        "GuideName": "E4+1",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5008"
+      },
+      {
+        "GuideNumber": "5009",
+        "GuideName": "5SELECT",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "URL": "http://192.168.123.10:5004/auto/v5009"
+      },
+      {
+        "GuideNumber": "5010",
+        "GuideName": "Unknown",
+        "VideoCodec": "H264",
+        "AudioCodec": "AAC",
+        "HD": 1,
+        "URL": "http://192.168.123.10:5004/auto/v5010"
+      },
+      {
+        "GuideNumber": "5011",
+        "GuideName": "Unknown",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
+        "URL": "http://192.168.123.10:5004/auto/v5011"
+      }
+    ],
+    "status.json": [
+      {
+        "Resource": "tuner0"
+      },
+      {
+        "Resource": "tuner1"
+      },
+      {
+        "Resource": "tuner2"
+      },
+      {
+        "Resource": "tuner3"
+      }
+    ]
+  }
+}
