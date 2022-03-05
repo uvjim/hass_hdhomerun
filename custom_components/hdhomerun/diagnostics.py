@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
-    CONF_DATA_COORDINATOR,
+    CONF_DATA_COORDINATOR_GENERAL,
     DOMAIN,
 )
 from .hdhomerun import HDHomeRunDevice
@@ -24,8 +24,8 @@ _LOGGER = logging.getLogger(__name__)
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, config_entry: ConfigEntry) -> dict[str, Any]:
     """Diagnostics for the config entry"""
 
-    coordinator: DataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR]
-    hdhomerun_device: HDHomeRunDevice = coordinator.data
+    cg: DataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_GENERAL]
+    hdhomerun_device: HDHomeRunDevice = cg.data
 
     ret = getattr(hdhomerun_device, "_results")
 

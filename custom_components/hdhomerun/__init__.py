@@ -15,9 +15,12 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
-    CONF_DATA_COORDINATOR,
+    CONF_DATA_COORDINATOR_GENERAL,
+    CONF_DATA_COORDINATOR_TUNER_STATUS,
+    CONF_SCAN_INTERVAL_TUNER_STATUS,
     CONF_HOST,
     DEF_SCAN_INTERVAL_SECS,
+    DEF_SCAN_INTERVAL_TUNER_STATUS_SECS,
     DOMAIN,
     PLATFORMS,
 )
@@ -47,6 +50,7 @@ async def _async_reload(hass: HomeAssistant, config_entry: ConfigEntry):
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Setup a config entry"""
 
+    tuner_coordinator: bool = True
     log_formatter = HDHomerunLogger(unique_id=config_entry.unique_id)
     _LOGGER.debug(log_formatter.message_format("entered"))
 
@@ -64,11 +68,17 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         session=async_get_clientsession(hass=hass),
     )
     try:
-        await hdhomerun_device.get_details(include_discover=True)
+        await hdhomerun_device.get_details(
+            include_discover=True,
+            include_tuner_status=True,
+        )
+    except HDHomeRunExceptionOldFirmware as err:
+        _LOGGER.warning(log_formatter.message_format("%s"), err)
+        tuner_coordinator = False
     except Exception as err:
         raise ConfigEntryNotReady from err
 
-    # region #-- set up the coordinator --#
+    # region #-- set up the coordinators --#
     async def _async_data_coordinator_update() -> HDHomeRunDevice:
         """"""
 
@@ -76,6 +86,17 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
             await hdhomerun_device.get_details(
                 include_discover=True,
                 include_lineups=True,
+            )
+        except HDHomeRunExceptionOldFirmware as exc:
+            _LOGGER.warning(log_formatter.message_format("%s"), exc)
+
+        return hdhomerun_device
+
+    async def _async_data_coordinator_tuner_status_update() -> HDHomeRunDevice:
+        """"""
+
+        try:
+            await hdhomerun_device.get_details(
                 include_tuner_status=True,
             )
         except HDHomeRunExceptionOldFirmware as exc:
@@ -83,15 +104,28 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
         return hdhomerun_device
 
-    coordinator: DataUpdateCoordinator = DataUpdateCoordinator(
+    coordinator_general: DataUpdateCoordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
-        name=DOMAIN,
+        name=f"{DOMAIN}_general",
         update_method=_async_data_coordinator_update,
         update_interval=timedelta(seconds=config_entry.options.get(CONF_SCAN_INTERVAL, DEF_SCAN_INTERVAL_SECS)),
     )
-    hass.data[DOMAIN][config_entry.entry_id] = {CONF_DATA_COORDINATOR: coordinator}
-    await coordinator.async_config_entry_first_refresh()
+    hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_GENERAL] = coordinator_general
+    await coordinator_general.async_config_entry_first_refresh()
+
+    if tuner_coordinator:
+        coordinator_tuner_status: DataUpdateCoordinator = DataUpdateCoordinator(
+            hass,
+            _LOGGER,
+            name=f"{DOMAIN}_tuner_status",
+            update_method=_async_data_coordinator_tuner_status_update,
+            update_interval=timedelta(
+                seconds=config_entry.options.get(CONF_SCAN_INTERVAL_TUNER_STATUS, DEF_SCAN_INTERVAL_TUNER_STATUS_SECS)
+            ),
+        )
+        hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_TUNER_STATUS] = coordinator_tuner_status
+        await coordinator_tuner_status.async_config_entry_first_refresh()
     # endregion
 
     # region #-- setup the platforms --#

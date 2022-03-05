@@ -11,7 +11,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
 
 from .const import (
-    CONF_DATA_COORDINATOR,
+    CONF_DATA_COORDINATOR_GENERAL,
     DOMAIN,
     ENTITY_SLUG,
 )
@@ -35,7 +35,7 @@ async def async_setup_entry(
     sensors = [
         HDHomerunBinarySensor(
             config_entry=config_entry,
-            coordinator=hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR],
+            coordinator=hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_GENERAL],
             description=description,
         )
         for description in BINARY_SENSORS

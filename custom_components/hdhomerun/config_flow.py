@@ -24,7 +24,9 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
     CONF_HOST,
+    CONF_SCAN_INTERVAL_TUNER_STATUS,
     DEF_SCAN_INTERVAL_SECS,
+    DEF_SCAN_INTERVAL_TUNER_STATUS_SECS,
     DOMAIN,
 )
 from .hdhomerun import (
@@ -69,6 +71,10 @@ async def _async_build_schema_with_user_input(step: str, user_input: dict) -> vo
             vol.Optional(
                 CONF_SCAN_INTERVAL,
                 default=user_input.get(CONF_SCAN_INTERVAL, DEF_SCAN_INTERVAL_SECS),
+            ): cv.positive_int,
+            vol.Optional(
+                CONF_SCAN_INTERVAL_TUNER_STATUS,
+                default=user_input.get(CONF_SCAN_INTERVAL_TUNER_STATUS, DEF_SCAN_INTERVAL_TUNER_STATUS_SECS),
             ): cv.positive_int,
         }
 
