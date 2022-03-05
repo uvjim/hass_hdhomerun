@@ -23,6 +23,10 @@ available.
 - Version - the current firmware version of the device
 - Tuner Count - the number of tuners the device has
 - Newest Version - the latest version of firmware available for the device
+- Tuner X - where X is the tuner number (states will be: idle, scanning or 
+  the channel being watched)
+  - virtual channel number, virtual channel name, frequency, signal strength,
+    signal quality, symbol quality, network rate and target IP 
 
 ## Setup
 
