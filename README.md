@@ -67,11 +67,10 @@ enough then you change the name here.
 
 It is possible to configure the following options for the integration.
 
-#### Timers
-
 ![Configure Options](images/config_options.png)
 
 - `Scan Interval`: the frequency of updates for the sensors, default `300s`
+- `Tuner status update`: the frequenct of updates for tuners, default `10s`
 
 ## Troubleshooting
 
