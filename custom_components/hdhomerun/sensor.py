@@ -24,6 +24,11 @@ from homeassistant.util import slugify
 from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
     CONF_DATA_COORDINATOR_TUNER_STATUS,
+    CONF_TUNER_CHANNEL_FORMAT,
+    CONF_TUNER_CHANNEL_NAME,
+    CONF_TUNER_CHANNEL_NUMBER_NAME,
+    CONF_TUNER_CHANNEL_NUMBER,
+    DEF_TUNER_CHANNEL_FORMAT,
     DOMAIN,
     ENTITY_SLUG,
 )
@@ -150,12 +155,20 @@ class HDHomerunTunerSensor(HDHomerunSensor):
         self._tuner = self._get_tuner()
         super()._handle_coordinator_update()
 
-    def _value(self):
+    def _value(self) -> Union[StateType, date, datetime]:
         """Determine the value of the sensor"""
 
         ret = STATE_IDLE
         if self._tuner.get(KEY_TUNER_CHANNEL_NUMBER) and self._tuner.get(KEY_TUNER_CHANNEL_NAME):
-            ret = f"{self._tuner.get(KEY_TUNER_CHANNEL_NUMBER)}: {self._tuner.get(KEY_TUNER_CHANNEL_NAME)}"
+            channel_format = self._config.options.get(CONF_TUNER_CHANNEL_FORMAT, DEF_TUNER_CHANNEL_FORMAT)
+            if channel_format == CONF_TUNER_CHANNEL_NAME:
+                ret = self._tuner.get(KEY_TUNER_CHANNEL_NAME)
+            elif channel_format == CONF_TUNER_CHANNEL_NUMBER:
+                ret = self._tuner.get(KEY_TUNER_CHANNEL_NUMBER)
+            elif channel_format == CONF_TUNER_CHANNEL_NUMBER_NAME:
+                ret = f"{self._tuner.get(KEY_TUNER_CHANNEL_NUMBER)}: {self._tuner.get(KEY_TUNER_CHANNEL_NAME)}"
+            else:
+                ret = None
         elif self._tuner.get(KEY_TUNER_FREQUENCY):
             ret = STATE_IN_USE
 
