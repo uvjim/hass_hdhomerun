@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import (
     Any,
     Callable,
-    Mapping,
     Optional,
 )
 
@@ -76,7 +75,6 @@ class RequiredHDHomerunSensorDescription:
 class OptionalHDHomerunSensorDescription:
     """Represent the optional attributes of the sensor description."""
 
-    extra_state_attributes: Optional[Callable[[Any], Optional[Mapping[str, Any]]]] = None
     state_value: Optional[Callable[[Any], Any]] = None
 
 
@@ -134,4 +132,5 @@ class HDHomerunEntity(CoordinatorEntity):
             name=self._config.title,
             sw_version=self._data.current_firmware if self._data else "",
         )
+
 # endregion

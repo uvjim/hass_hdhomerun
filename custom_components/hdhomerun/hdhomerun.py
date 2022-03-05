@@ -28,6 +28,9 @@ KEY_DISCOVER_SERIAL: str = "DeviceID"
 KEY_DISCOVER_TUNER_COUNT: str = "TunerCount"
 KEY_DISCOVER_UPGRADE_FIRMWARE: str = "UpgradeAvailable"
 
+KEY_TUNER_CHANNEL_NAME: str = "VctName"
+KEY_TUNER_CHANNEL_NUMBER: str = "VctNumber"
+KEY_TUNER_FREQUENCY: str = "Frequency"
 KEY_TUNER_NAME: str = "Resource"
 
 
@@ -146,6 +149,14 @@ class HDHomeRunDevice(HDHomerunLogger):
 
         _LOGGER.debug(self.message_format("exited"))
 
+    def get_tuner(self, name: str) -> dict:
+        """"""
+
+        found_tuner = [tuner for tuner in self.tuners if tuner.get(KEY_TUNER_NAME).lower() == name.lower()]
+        ret = found_tuner[0] if found_tuner else {}
+
+        return ret
+
     # region #-- properties --#
     @property
     def channels(self) -> Optional[List[dict]]:
@@ -224,14 +235,12 @@ class HDHomeRunDevice(HDHomerunLogger):
         return ret
 
     @property
-    def tuners(self, name: Optional[str] = None) -> List[dict]:
+    def tuners(self) -> List[dict]:
         """"""
 
         ret = []
         if self._results:
             ret = self._results.get(DEF_TUNER_STATUS, [])
-            if name:
-                ret = [tuner for tuner in ret if tuner.get(KEY_TUNER_NAME).lower() == name.lower()]
 
         return ret
 
