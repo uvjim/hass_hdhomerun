@@ -41,8 +41,9 @@ from .hdhomerun import (
 )
 # endregion
 
-STATE_IDLE = "idle"
-STATE_SCANNING = "scanning"
+STATE_IDLE = "Idle"
+STATE_IN_USE = "In use"
+STATE_SCANNING = "Scanning"
 
 
 async def async_setup_entry(
@@ -156,7 +157,7 @@ class HDHomerunTunerSensor(HDHomerunSensor):
         if self._tuner.get(KEY_TUNER_CHANNEL_NUMBER) and self._tuner.get(KEY_TUNER_CHANNEL_NAME):
             ret = f"{self._tuner.get(KEY_TUNER_CHANNEL_NUMBER)}: {self._tuner.get(KEY_TUNER_CHANNEL_NAME)}"
         elif self._tuner.get(KEY_TUNER_FREQUENCY):
-            ret = STATE_SCANNING
+            ret = STATE_IN_USE
 
         return ret
 
@@ -178,7 +179,7 @@ class HDHomerunTunerSensor(HDHomerunSensor):
         """Get the icon for the sensor"""
 
         ret = "mdi:television-classic"
-        if self._value() in (STATE_SCANNING, STATE_IDLE):
+        if self._value() in (STATE_IDLE, STATE_IN_USE, STATE_SCANNING):
             ret = "mdi:television-classic-off"
 
         return ret
