@@ -23,8 +23,8 @@ available.
 - Version - the current firmware version of the device
 - Tuner Count - the number of tuners the device has
 - Newest Version - the latest version of firmware available for the device
-- Tuner X - where X is the tuner number (states will be: idle, scanning or 
-  the channel being watched)
+- Tuner X - where X is the tuner number (states can be: `Idle`, `In use`, 
+  `Scanning` or the channel being watched, using the specified format)
   - virtual channel number, virtual channel name, frequency, signal strength,
     signal quality, symbol quality, network rate and target IP 
 
@@ -67,10 +67,21 @@ enough then you change the name here.
 
 It is possible to configure the following options for the integration.
 
-![Configure Options](images/config_options.png)
+### Timeouts
+
+![Configure Options](images/config_timeouts.png)
 
 - `Scan Interval`: the frequency of updates for the sensors, default `300s`
-- `Tuner status update`: the frequenct of updates for tuners, default `10s`
+- `Tuner status update`: the frequency of updates for tuners, default `10s`
+
+### Options
+
+![Configure Options](images/config_options.png)
+
+From here you can select which format should be used for the sensor. The 
+default is `Channel name`.
+
+*This setting is only effective when a tuner is actively tuned to a channel.*
 
 ## Troubleshooting
 
