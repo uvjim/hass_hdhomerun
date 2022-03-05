@@ -25,8 +25,11 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import (
     CONF_HOST,
     CONF_SCAN_INTERVAL_TUNER_STATUS,
+    CONF_TUNER_CHANNEL_AVAILABLE_FORMATS,
+    CONF_TUNER_CHANNEL_FORMAT,
     DEF_SCAN_INTERVAL_SECS,
     DEF_SCAN_INTERVAL_TUNER_STATUS_SECS,
+    DEF_TUNER_CHANNEL_FORMAT,
     DOMAIN,
 )
 from .hdhomerun import (
@@ -46,6 +49,7 @@ STEP_DETAILS: str = "details"
 STEP_FINISH: str = "finish"
 STEP_FRIENDLY_NAME: str = "friendly_name"
 STEP_OPTIONS: str = "options"
+STEP_TIMEOUTS: str = "timeouts"
 STEP_USER: str = "user"
 
 
@@ -67,6 +71,14 @@ async def _async_build_schema_with_user_input(step: str, user_input: dict) -> vo
         }
 
     if step == STEP_OPTIONS:
+        schema = {
+            vol.Required(
+                CONF_TUNER_CHANNEL_FORMAT,
+                default=user_input.get(CONF_TUNER_CHANNEL_FORMAT, DEF_TUNER_CHANNEL_FORMAT)
+            ): vol.In(CONF_TUNER_CHANNEL_AVAILABLE_FORMATS)
+        }
+
+    if step == STEP_TIMEOUTS:
         schema = {
             vol.Optional(
                 CONF_SCAN_INTERVAL,
@@ -258,7 +270,7 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, HDHomerunLogger, domain=DOM
         )
 
 
-class HDHomerunOptionsFlowHandler(config_entries.OptionsFlow):
+class HDHomerunOptionsFlowHandler(config_entries.OptionsFlow, HDHomerunLogger):
     """"""
 
     def __init__(self, config_entry: config_entries.ConfigEntry):
@@ -269,14 +281,23 @@ class HDHomerunOptionsFlowHandler(config_entries.OptionsFlow):
         self._errors: dict = {}
         self._options: dict = dict(config_entry.options)
 
-    async def async_step_init(self, _=None) -> data_entry_flow.FlowResult:
+    # noinspection PyUnusedLocal
+    async def async_step_finish(self, user_input=None) -> data_entry_flow.FlowResult:
         """"""
 
-        return await self.async_step_options()
+        _LOGGER.debug(self.message_format("entered, user_input: %s"), user_input)
+        return self.async_create_entry(title=self._config_entry.title, data=self._options)
+
+    async def async_step_init(self, user_input=None) -> data_entry_flow.FlowResult:
+        """"""
+
+        _LOGGER.debug(self.message_format("entered, user_input: %s"), user_input)
+        return await self.async_step_timeouts()
 
     async def async_step_options(self, user_input: Union[dict, None] = None) -> data_entry_flow.FlowResult:
         """"""
 
+        _LOGGER.debug(self.message_format("entered, user_input: %s"), user_input)
         if user_input is not None:
             self._errors = {}
             self._options.update(user_input)
@@ -285,11 +306,22 @@ class HDHomerunOptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id=STEP_OPTIONS,
             data_schema=await _async_build_schema_with_user_input(STEP_OPTIONS, self._options),
-            errors=self._errors
+            errors=self._errors,
+            last_step=True
         )
 
-    # noinspection PyUnusedLocal
-    async def async_step_finish(self, user_input=None) -> data_entry_flow.FlowResult:
+    async def async_step_timeouts(self, user_input: Union[dict, None] = None) -> data_entry_flow.FlowResult:
         """"""
 
-        return self.async_create_entry(title=self._config_entry.title, data=self._options)
+        _LOGGER.debug(self.message_format("entered, user_input: %s"), user_input)
+        if user_input is not None:
+            self._errors = {}
+            self._options.update(user_input)
+            return await self.async_step_options()
+
+        return self.async_show_form(
+            step_id=STEP_TIMEOUTS,
+            data_schema=await _async_build_schema_with_user_input(STEP_TIMEOUTS, self._options),
+            errors=self._errors,
+            last_step=False
+        )
