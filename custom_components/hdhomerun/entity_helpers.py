@@ -1,18 +1,6 @@
 """"""
 
 # region #-- imports --#
-import logging
-from dataclasses import dataclass
-from typing import (
-    Any,
-    Callable,
-    Optional,
-)
-
-from homeassistant.components.binary_sensor import (
-    BinarySensorDeviceClass,
-    BinarySensorEntityDescription,
-)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
@@ -21,45 +9,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import DOMAIN
-from .hdhomerun import (
-    HDHomeRunDevice,
-)
-# endregion
-
-
-_LOGGER = logging.getLogger(__name__)
-
-
-# region #-- Binary Sensors --#
-@dataclass
-class OptionalHDHomerunBinarySensorDescription:
-    """Represent the required attributes of the binary_sensor description."""
-
-    state_value: Optional[Callable[[Any], bool]] = None
-
-
-@dataclass
-class RequiredHDHomerunBinarySensorDescription:
-    """Represent the required attributes of the sensor description."""
-
-
-@dataclass
-class HDHomerunBinarySensorEntityDescription(
-    OptionalHDHomerunBinarySensorDescription,
-    BinarySensorEntityDescription,
-    RequiredHDHomerunBinarySensorDescription,
-):
-    """Describes binary_sensor entity."""
-
-
-BINARY_SENSORS: tuple[HDHomerunBinarySensorEntityDescription, ...] = (
-    HDHomerunBinarySensorEntityDescription(
-        key="",
-        name="Update available",
-        device_class=BinarySensorDeviceClass.UPDATE,
-        state_value=lambda d: bool(d.latest_firmware),
-    ),
-)
+from .hdhomerun import HDHomeRunDevice
 # endregion
 
 
