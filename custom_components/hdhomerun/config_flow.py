@@ -26,9 +26,11 @@ from .const import (
     CONF_HOST,
     CONF_SCAN_INTERVAL_TUNER_STATUS,
     CONF_TUNER_CHANNEL_AVAILABLE_FORMATS,
+    CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
     CONF_TUNER_CHANNEL_FORMAT,
     DEF_SCAN_INTERVAL_SECS,
     DEF_SCAN_INTERVAL_TUNER_STATUS_SECS,
+    DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
     DEF_TUNER_CHANNEL_FORMAT,
     DOMAIN,
 )
@@ -72,10 +74,14 @@ async def _async_build_schema_with_user_input(step: str, user_input: dict) -> vo
 
     if step == STEP_OPTIONS:
         schema = {
+            vol.Optional(
+                CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
+                default=user_input.get(CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH, DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH)
+            ): cv.string,
             vol.Required(
                 CONF_TUNER_CHANNEL_FORMAT,
                 default=user_input.get(CONF_TUNER_CHANNEL_FORMAT, DEF_TUNER_CHANNEL_FORMAT)
-            ): vol.In(CONF_TUNER_CHANNEL_AVAILABLE_FORMATS)
+            ): vol.In(CONF_TUNER_CHANNEL_AVAILABLE_FORMATS),
         }
 
     if step == STEP_TIMEOUTS:
@@ -300,8 +306,12 @@ class HDHomerunOptionsFlowHandler(config_entries.OptionsFlow, HDHomerunLogger):
         _LOGGER.debug(self.message_format("entered, user_input: %s"), user_input)
         if user_input is not None:
             self._errors = {}
+            user_input[CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH] = user_input.get(
+                CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
+                DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH
+            ).strip()
             self._options.update(user_input)
-            return await self.async_step_finish(user_input=user_input)
+            return await self.async_step_finish()
 
         return self.async_show_form(
             step_id=STEP_OPTIONS,

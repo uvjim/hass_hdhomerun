@@ -34,7 +34,10 @@
     "options": {
         "step": {
             "options": {
-                "description": "Pick the format you'd like the channel to be displayed in",
+                "data": {
+                    "channel_entity_picture_path": "Channel logo path",
+                    "channel_format":"Pick the format you'd like the channel to be displayed in"
+                },
                 "title": "Options"
             },
             "timeouts": {
