@@ -13,7 +13,6 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntityDescription,
 )
-from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
@@ -25,7 +24,6 @@ from .const import DOMAIN
 from .hdhomerun import (
     HDHomeRunDevice,
 )
-
 # endregion
 
 
@@ -65,50 +63,7 @@ BINARY_SENSORS: tuple[HDHomerunBinarySensorEntityDescription, ...] = (
 # endregion
 
 
-# region #-- Sensors --#
-@dataclass
-class RequiredHDHomerunSensorDescription:
-    """Represent the required attributes of the sensor description."""
-
-
-@dataclass
-class OptionalHDHomerunSensorDescription:
-    """Represent the optional attributes of the sensor description."""
-
-    state_value: Optional[Callable[[Any], Any]] = None
-
-
-@dataclass
-class HDHomerunSensorEntityDescription(
-    OptionalHDHomerunSensorDescription,
-    SensorEntityDescription,
-    RequiredHDHomerunSensorDescription
-):
-    """Describes sensor entity."""
-
-
-SENSORS: tuple[HDHomerunSensorEntityDescription, ...] = (
-    HDHomerunSensorEntityDescription(
-        key="channels",
-        name="Channel Count",
-        state_value=lambda d: len(d)
-    ),
-    HDHomerunSensorEntityDescription(
-        key="current_firmware",
-        name="Version",
-    ),
-    HDHomerunSensorEntityDescription(
-        key="tuner_count",
-        name="Tuner Count",
-    ),
-    HDHomerunSensorEntityDescription(
-        key="",
-        name="Newest Version",
-        state_value=lambda d: d.latest_firmware or d.current_firmware
-    ),
-)
-
-
+# region #-- base entity --#
 class HDHomerunEntity(CoordinatorEntity):
     """"""
 
@@ -132,5 +87,4 @@ class HDHomerunEntity(CoordinatorEntity):
             name=self._config.title,
             sw_version=self._data.current_firmware if self._data else "",
         )
-
 # endregion
