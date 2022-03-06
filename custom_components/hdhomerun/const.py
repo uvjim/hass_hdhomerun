@@ -12,6 +12,7 @@ CONF_DATA_COORDINATOR_GENERAL: str = "data_coordinator_general"
 CONF_DATA_COORDINATOR_TUNER_STATUS: str = "data_coordinaror_tuner_status"
 CONF_HOST: str = "host"
 CONF_SCAN_INTERVAL_TUNER_STATUS: str = "scan_interval_tuner_status"
+CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH: str = "channel_entity_picture_path"
 CONF_TUNER_CHANNEL_FORMAT: str = "channel_format"
 CONF_TUNER_CHANNEL_NAME: str = "channel_name"
 CONF_TUNER_CHANNEL_NUMBER_NAME: str = "channel_number_name"
@@ -25,6 +26,7 @@ CONF_TUNER_CHANNEL_AVAILABLE_FORMATS: dict = {
 
 DEF_SCAN_INTERVAL_SECS: int = 300
 DEF_SCAN_INTERVAL_TUNER_STATUS_SECS: int = 10
+DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH: str = ""
 DEF_TUNER_CHANNEL_FORMAT: str = CONF_TUNER_CHANNEL_NAME
 
 

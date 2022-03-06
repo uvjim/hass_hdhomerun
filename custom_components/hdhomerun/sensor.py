@@ -2,6 +2,7 @@
 
 # region #-- imports --#
 import dataclasses
+import os.path
 import re
 from datetime import (
     date,
@@ -31,10 +32,12 @@ from homeassistant.util import slugify
 from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
     CONF_DATA_COORDINATOR_TUNER_STATUS,
+    CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
     CONF_TUNER_CHANNEL_FORMAT,
     CONF_TUNER_CHANNEL_NAME,
     CONF_TUNER_CHANNEL_NUMBER_NAME,
     CONF_TUNER_CHANNEL_NUMBER,
+    DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
     DEF_TUNER_CHANNEL_FORMAT,
     DOMAIN,
     ENTITY_SLUG,
@@ -153,6 +156,20 @@ class HDHomerunTunerSensor(HDHomerunSensor):
                 ret = None
         elif self._tuner.get(KEY_TUNER_FREQUENCY):
             ret = STATE_IN_USE
+
+        return ret
+
+    @property
+    def entity_picture(self) -> Optional[str]:
+        """Get the entity picture based on configured paths"""
+
+        ret = None
+        entity_picture_path = self._config.options.get(
+            CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
+            DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH
+        )
+        if entity_picture_path and self._value() not in (STATE_IDLE, STATE_IN_USE, STATE_SCANNING):
+            ret = os.path.join(entity_picture_path, f"{self._tuner.get(KEY_TUNER_CHANNEL_NAME, '').lower()}.png")
 
         return ret
 
