@@ -25,7 +25,7 @@ from .const import (
     DOMAIN,
     ENTITY_SLUG,
 )
-from .entity_helpers import HDHomerunEntity
+from . import HDHomerunEntity
 # endregion
 
 
