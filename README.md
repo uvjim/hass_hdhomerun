@@ -78,7 +78,11 @@ It is possible to configure the following options for the integration.
 
 ![Configure Options](images/config_options.png)
 
-From here you can select which format should be used for the sensor. The 
+- `Channel logo path` - the path to a directory containing channel logos, 
+  e.g. `/local/channel_logos`. The default is to have no logo. If previously 
+  set you can clear this option by just entering a space.
+
+You can also select which format should be used for the sensor. The 
 default is `Channel name`.
 
 *This setting is only effective when a tuner is actively tuned to a channel.*
