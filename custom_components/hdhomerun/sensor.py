@@ -16,9 +16,14 @@ from typing import (
     Union,
 )
 
-from homeassistant.components.sensor import SensorEntity, StateType, SensorEntityDescription
+from homeassistant.components.sensor import (
+    SensorEntity,
+    StateType,
+    SensorEntityDescription
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
@@ -82,12 +87,13 @@ class HDHomerunSensor(HDHomerunEntity, SensorEntity):
 
         super().__init__(coordinator=coordinator, config_entry=config_entry)
 
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+
         self.entity_description: HDHomerunSensorEntityDescription = description
 
         self._attr_name = f"{ENTITY_SLUG} {config_entry.title.replace(ENTITY_SLUG, '')}: {self.entity_description.name}"
         self._attr_unique_id = f"{config_entry.unique_id}::sensor::{slugify(self.entity_description.name)}"
 
-    # region #-- properties --#
     @property
     def native_value(self) -> Union[StateType, date, datetime]:
         """Get the value of the sensor"""
@@ -102,7 +108,6 @@ class HDHomerunSensor(HDHomerunEntity, SensorEntity):
                 return getattr(self._data, self.entity_description.key, None)
         else:  # no data
             return None
-    # endregion
 
 
 class HDHomerunTunerSensor(HDHomerunSensor):
