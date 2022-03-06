@@ -42,7 +42,7 @@ from .const import (
     DOMAIN,
     ENTITY_SLUG,
 )
-from .entity_helpers import HDHomerunEntity
+from . import HDHomerunEntity
 from .hdhomerun import (
     HDHomeRunDevice,
     KEY_TUNER_CHANNEL_NAME,

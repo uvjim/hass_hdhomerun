@@ -12,7 +12,11 @@ from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.update_coordinator import (
+    DataUpdateCoordinator,
+    CoordinatorEntity,
+)
 
 from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
@@ -30,7 +34,6 @@ from .hdhomerun import (
     HDHomeRunExceptionOldFirmware,
 )
 from .logger import HDHomerunLogger
-
 # endregion
 
 _LOGGER = logging.getLogger(__name__)
@@ -152,3 +155,30 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
     # endregion
 
     return ret
+
+
+# region #-- base entity --#
+class HDHomerunEntity(CoordinatorEntity):
+    """"""
+
+    def __init__(self, coordinator: DataUpdateCoordinator, config_entry: ConfigEntry) -> None:
+        """Initialize the entity"""
+
+        super().__init__(coordinator)
+        self._config: ConfigEntry = config_entry
+        self._data: HDHomeRunDevice = self.coordinator.data
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device information of the entity."""
+
+        # noinspection HttpUrlsUsage
+        return DeviceInfo(
+            configuration_url=f"http://{self._config.data.get('host')}",
+            identifiers={(DOMAIN, self._config.unique_id)},
+            manufacturer="SiliconDust",
+            model=self._data.model if self._data else "",
+            name=self._config.title,
+            sw_version=self._data.current_firmware if self._data else "",
+        )
+# endregion
