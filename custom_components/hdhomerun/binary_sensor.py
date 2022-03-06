@@ -1,8 +1,17 @@
 """"""
 
 # region #-- imports --#
+import dataclasses
+from typing import (
+    Any,
+    Callable,
+    Optional,
+)
+
 from homeassistant.components.binary_sensor import (
+    BinarySensorDeviceClass,
     BinarySensorEntity,
+    BinarySensorEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -15,35 +24,34 @@ from .const import (
     DOMAIN,
     ENTITY_SLUG,
 )
-from .entity_helpers import (
-    BINARY_SENSORS,
-    HDHomerunEntity,
-    HDHomerunBinarySensorEntityDescription,
-)
-
-
+from .entity_helpers import HDHomerunEntity
 # endregion
 
 
-async def async_setup_entry(
-    hass: HomeAssistant,
-    config_entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback
-) -> None:
-    """Set up the sensor"""
+# region #-- binary sensor descriptions --#
+@dataclasses.dataclass
+class OptionalHDHomerunBinarySensorDescription:
+    """Represent the required attributes of the binary_sensor description."""
 
-    sensors = [
-        HDHomerunBinarySensor(
-            config_entry=config_entry,
-            coordinator=hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_GENERAL],
-            description=description,
-        )
-        for description in BINARY_SENSORS
-    ]
-
-    async_add_entities(sensors, update_before_add=True)
+    state_value: Optional[Callable[[Any], bool]] = None
 
 
+@dataclasses.dataclass
+class RequiredHDHomerunBinarySensorDescription:
+    """Represent the required attributes of the sensor description."""
+
+
+@dataclasses.dataclass
+class HDHomerunBinarySensorEntityDescription(
+    OptionalHDHomerunBinarySensorDescription,
+    BinarySensorEntityDescription,
+    RequiredHDHomerunBinarySensorDescription,
+):
+    """Describes binary_sensor entity."""
+# endregion
+
+
+# region #-- binary sensor classes --#
 class HDHomerunBinarySensor(HDHomerunEntity, BinarySensorEntity):
     """"""
 
@@ -75,3 +83,33 @@ class HDHomerunBinarySensor(HDHomerunEntity, BinarySensorEntity):
         else:
             return False
     # endregion
+# endregion
+
+
+BINARY_SENSORS: tuple[HDHomerunBinarySensorEntityDescription, ...] = (
+    HDHomerunBinarySensorEntityDescription(
+        key="",
+        name="Update available",
+        device_class=BinarySensorDeviceClass.UPDATE,
+        state_value=lambda d: bool(d.latest_firmware),
+    ),
+)
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback
+) -> None:
+    """Set up the sensor"""
+
+    sensors = [
+        HDHomerunBinarySensor(
+            config_entry=config_entry,
+            coordinator=hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_GENERAL],
+            description=description,
+        )
+        for description in BINARY_SENSORS
+    ]
+
+    async_add_entities(sensors, update_before_add=True)
