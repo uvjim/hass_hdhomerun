@@ -15,6 +15,7 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
@@ -64,6 +65,8 @@ class HDHomerunBinarySensor(HDHomerunEntity, BinarySensorEntity):
         """"""
 
         super().__init__(coordinator=coordinator, config_entry=config_entry)
+
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
 
         self.entity_description: HDHomerunBinarySensorEntityDescription = description
 
