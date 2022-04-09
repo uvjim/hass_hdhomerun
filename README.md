@@ -15,14 +15,16 @@ available.
 #### Binary Sensors
 
 - Update available - denotes whether there is a firmware update available 
-  for the device
+  for the device *(only if using a HASS version below 2022.4)*
 
 #### Sensors
 
 - Channel Count - the number of channels currently tuned on the device
-- Version - the current firmware version of the device
+- Version - the current firmware version of the device *(only if using a 
+  HASS version below 2022.4)* 
 - Tuner Count - the number of tuners the device has
-- Newest Version - the latest version of firmware available for the device
+- Newest Version - the latest version of firmware available for the device *
+  (only if using a HASS version below 2022.4)*
 - Tuner X - where X is the tuner number (states can be: `Idle`, `In use`, 
   `Scanning` or the channel being watched, using the specified format)
   - virtual channel number, virtual channel name, frequency, signal strength,
