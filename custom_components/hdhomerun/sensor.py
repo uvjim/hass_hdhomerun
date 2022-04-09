@@ -1,6 +1,8 @@
 """"""
 
 # region #-- imports --#
+from __future__ import annotations
+
 import dataclasses
 import os.path
 import re
@@ -14,7 +16,6 @@ from typing import (
     List,
     Mapping,
     Optional,
-    Union,
 )
 
 from homeassistant.components.sensor import (
@@ -107,7 +108,7 @@ class HDHomerunSensor(HDHomerunEntity, SensorEntity):
                                f"{slugify(self.entity_description.name)}"
 
     @property
-    def native_value(self) -> Union[StateType, date, datetime]:
+    def native_value(self) -> StateType | date | datetime:
         """Get the value of the sensor"""
 
         if self._data:  # we have data
@@ -149,7 +150,7 @@ class HDHomerunTunerSensor(HDHomerunSensor):
         self._tuner = self._get_tuner()
         super()._handle_coordinator_update()
 
-    def _value(self) -> Union[StateType, date, datetime]:
+    def _value(self) -> StateType | date | datetime:
         """Determine the value of the sensor"""
 
         ret = STATE_IDLE
@@ -206,7 +207,7 @@ class HDHomerunTunerSensor(HDHomerunSensor):
         return ret
 
     @property
-    def native_value(self) -> Union[StateType, date, datetime]:
+    def native_value(self) -> StateType | date | datetime:
         """Get the value of the sensor"""
 
         return self._value()
