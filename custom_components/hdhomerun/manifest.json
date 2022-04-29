@@ -10,7 +10,7 @@
   "documentation": "https://github.com/uvjim/hass_hdhomerun",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/uvjim/hass_hdhomerun/issues",
-  "name": "HDHomerun",
+  "name": "HDHomeRun",
   "requirements": [],
   "ssdp": [
     {
