@@ -6,7 +6,8 @@ Home Assistant integration for the Silicondust HDHomeRun network tuners.
 ## Description
 
 This integration can be used to get basic information on each HDHomeRun 
-device in the network.
+device in the network. The integration can use the UDP broadcast discovery 
+protocol, the TCP control protocol and the HTTP API.
 
 ### Entities Provided
 Where applicable the sub-items in the list detail the additional attributes 
@@ -28,42 +29,50 @@ available.
 - Tuner X - where X is the tuner number (states can be: `Idle`, `In use`, 
   `Scanning` or the channel being watched, using the specified format)
   - virtual channel number, virtual channel name, frequency, signal strength,
-    signal quality, symbol quality, network rate and target IP 
+    signal quality, symbol quality, network rate and target IP (as applicable) 
 
 ## Setup
 
-### `Add Integration` button
+### <a id="ManualAdd"></a>`Add Integration` button
 
 If adding the integration by clicking the `Add Integration` button the 
 following information will be requested. 
 
 ![Initial Setup Screen](images/step_user.png)
 
-- `Friendly name`: (optional) The name you'd like the device to appear as. 
-  If left blank one will be generated for you. 
-- `Host`: (required) The IP of HDHomeRun on the network.
+- `Host`: (required) The IP of an HDHomeRun device on the network. Leave 
+  blank to carry out discovery.
 
+>Provide a valid IP address, and you will be prompted for a friendly name.
+> 
+>![Initial Setup Screen](images/friendly_name.png)
+
+### HTTP/UDP Discovery
+
+> This section is only applicable if you did not provide a host in this 
+> [section](#ManualAdd)
+
+![HTTP/UDP Discovery](images/http_udp_discovery.png)
+
+Click NEXT and you will be prompted for a friendly name.
+
+![Initial Setup Screen](images/friendly_name.png)
+
+### Setup Complete
 On successful set up the following screen will be seen detailing the device.
 
 ![Final Setup Screen](images/setup_finish.png)
 
-### Discovery
+## SSDP Discovery
 
-The integration can also detect the HDHomeRun devices on the network. When 
-found they will look like this on your devices screen.
+The integration can also detect the HDHomeRun devices on the network using 
+SSDP. When found they will look like this on your devices screen.
 
-![Initial Setup Screen](images/discovered.png)
+![Initial Setup Screen](images/ssdp_discovery.png)
 
-Clicking `CONFIGURE` will prompt for the following information.
+Clicking `CONFIGURE` you will be prompted for a friendly name.
 
-![Initial Setup Screen](images/discovered_details.png)
-
-On successful set up the following screen will be seen detailing the device.
-
-![Final Setup Screen](images/setup_finish.png)
-
-The name used is derived from the device details. If this isn't friendly 
-enough then you change the name here.
+![Initial Setup Screen](images/friendly_name.png)
 
 ## Configurable Options
 

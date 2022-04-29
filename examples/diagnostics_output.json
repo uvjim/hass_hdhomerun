@@ -1,23 +1,23 @@
 {
   "home_assistant": {
     "installation_type": "Home Assistant Core",
-    "version": "2022.2.5",
+    "version": "2022.4.7",
     "dev": false,
     "hassio": false,
     "virtualenv": true,
     "python_version": "3.9.2",
     "docker": false,
     "arch": "aarch64",
-    "timezone": "UTC",
+    "timezone": "Europe/London",
     "os_name": "Linux",
     "os_version": "5.10.92-v8+",
     "run_as_root": false
   },
   "custom_components": {
     "linksys_velop": {
-      "version": "2022.2.2",
+      "version": "2022.3.3",
       "requirements": [
-        "pyvelop==2022.2.6"
+        "pyvelop==2022.4.8"
       ]
     },
     "virginmedia_tv": {
@@ -27,6 +27,10 @@
       ]
     },
     "hdhomerun": {
+      "version": "2022.3.1",
+      "requirements": []
+    },
+    "freedns": {
       "version": "2022.3.1",
       "requirements": []
     }
@@ -43,7 +47,7 @@
     "documentation": "https://github.com/uvjim/hass_hdhomerun",
     "iot_class": "local_polling",
     "issue_tracker": "https://github.com/uvjim/hass_hdhomerun/issues",
-    "name": "HDHomerun",
+    "name": "HDHomeRun",
     "requirements": [],
     "ssdp": [
       {
@@ -55,18 +59,12 @@
     "is_built_in": false
   },
   "data": {
-    "discover.json": {
-      "FriendlyName": "HDHomeRun CONNECT QUATRO",
-      "ModelNumber": "HDHR5-4DT",
-      "FirmwareName": "hdhomerun5_dvbt",
-      "FirmwareVersion": "20220203",
-      "DeviceID": "1251129F",
-      "DeviceAuth": "**REDACTED**",
-      "BaseURL": "http://192.168.123.10:80",
-      "LineupURL": "http://192.168.123.10:80/lineup.json",
-      "TunerCount": 4
-    },
-    "lineup.json": [
+    "_host": "192.168.123.10",
+    "_created_session": true,
+    "_http_discovery_attempted": false,
+    "_available_firmware": null,
+    "_base_url": "http://192.168.123.10:80",
+    "_channels": [
       {
         "GuideNumber": "1",
         "GuideName": "BBC ONE W Mid",
@@ -115,11 +113,6 @@
         "VideoCodec": "MPEG2",
         "AudioCodec": "MPEG",
         "URL": "http://192.168.123.10:5004/auto/v7"
-      },
-      {
-        "GuideNumber": "9",
-        "GuideName": "BBC FOUR",
-        "URL": "http://192.168.123.10:5004/auto/v9"
       },
       {
         "GuideNumber": "10",
@@ -213,11 +206,6 @@
         "URL": "http://192.168.123.10:5004/auto/v22"
       },
       {
-        "GuideNumber": "23",
-        "GuideName": "BBC THREE",
-        "URL": "http://192.168.123.10:5004/auto/v23"
-      },
-      {
         "GuideNumber": "25",
         "GuideName": "Dave ja vu",
         "VideoCodec": "MPEG2",
@@ -304,13 +292,13 @@
       {
         "GuideNumber": "37",
         "GuideName": "QVC Beauty",
+        "VideoCodec": "MPEG2",
+        "AudioCodec": "MPEG",
         "URL": "http://192.168.123.10:5004/auto/v37"
       },
       {
         "GuideNumber": "38",
         "GuideName": "QVC Style",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
         "URL": "http://192.168.123.10:5004/auto/v38"
       },
       {
@@ -412,13 +400,6 @@
         "URL": "http://192.168.123.10:5004/auto/v52"
       },
       {
-        "GuideNumber": "55",
-        "GuideName": "5SELECT",
-        "VideoCodec": "H264",
-        "AudioCodec": "AAC",
-        "URL": "http://192.168.123.10:5004/auto/v55"
-      },
-      {
         "GuideNumber": "56",
         "GuideName": "5SELECT",
         "VideoCodec": "H264",
@@ -451,13 +432,6 @@
         "GuideNumber": "61",
         "GuideName": "GREAT! movies +",
         "URL": "http://192.168.123.10:5004/auto/v61"
-      },
-      {
-        "GuideNumber": "63",
-        "GuideName": "Blaze",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v63"
       },
       {
         "GuideNumber": "64",
@@ -540,13 +514,6 @@
         "URL": "http://192.168.123.10:5004/auto/v75"
       },
       {
-        "GuideNumber": "76",
-        "GuideName": "NOW 80s",
-        "VideoCodec": "H264",
-        "AudioCodec": "AAC",
-        "URL": "http://192.168.123.10:5004/auto/v76"
-      },
-      {
         "GuideNumber": "77",
         "GuideName": "NOW 80s",
         "VideoCodec": "H264",
@@ -557,18 +524,6 @@
         "GuideNumber": "78",
         "GuideName": "TCC",
         "URL": "http://192.168.123.10:5004/auto/v78"
-      },
-      {
-        "GuideNumber": "79",
-        "GuideName": "Dave ja vu",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v79"
-      },
-      {
-        "GuideNumber": "80",
-        "GuideName": "Blaze+1",
-        "URL": "http://192.168.123.10:5004/auto/v80"
       },
       {
         "GuideNumber": "81",
@@ -592,8 +547,6 @@
       {
         "GuideNumber": "84",
         "GuideName": "PBS America",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
         "URL": "http://192.168.123.10:5004/auto/v84"
       },
       {
@@ -618,30 +571,11 @@
         "URL": "http://192.168.123.10:5004/auto/v87"
       },
       {
-        "GuideNumber": "88",
-        "GuideName": "Together TV+1",
-        "VideoCodec": "H264",
-        "AudioCodec": "AAC",
-        "URL": "http://192.168.123.10:5004/auto/v88"
-      },
-      {
-        "GuideNumber": "89",
-        "GuideName": "Court TV",
-        "URL": "http://192.168.123.10:5004/auto/v89"
-      },
-      {
         "GuideNumber": "91",
         "GuideName": "That's TV (UK)",
         "VideoCodec": "H264",
         "AudioCodec": "AAC",
         "URL": "http://192.168.123.10:5004/auto/v91"
-      },
-      {
-        "GuideNumber": "93",
-        "GuideName": "PBS America +1",
-        "VideoCodec": "H264",
-        "AudioCodec": "AAC",
-        "URL": "http://192.168.123.10:5004/auto/v93"
       },
       {
         "GuideNumber": "94",
@@ -860,16 +794,6 @@
         "URL": "http://192.168.123.10:5004/auto/v236"
       },
       {
-        "GuideNumber": "250",
-        "GuideName": "BBC Red Button",
-        "URL": "http://192.168.123.10:5004/auto/v250"
-      },
-      {
-        "GuideNumber": "251",
-        "GuideName": "365 Travel",
-        "URL": "http://192.168.123.10:5004/auto/v251"
-      },
-      {
         "GuideNumber": "252",
         "GuideName": "Kiss Chat & Dat",
         "URL": "http://192.168.123.10:5004/auto/v252"
@@ -878,13 +802,6 @@
         "GuideNumber": "253",
         "GuideName": "Proud Dating",
         "URL": "http://192.168.123.10:5004/auto/v253"
-      },
-      {
-        "GuideNumber": "261",
-        "GuideName": "Racing TV",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "AC3",
-        "URL": "http://192.168.123.10:5004/auto/v261"
       },
       {
         "GuideNumber": "263",
@@ -942,16 +859,6 @@
         "GuideNumber": "678",
         "GuideName": "ADULT Xpanded T",
         "URL": "http://192.168.123.10:5004/auto/v678"
-      },
-      {
-        "GuideNumber": "679",
-        "GuideName": "ADULT Studio 66",
-        "URL": "http://192.168.123.10:5004/auto/v679"
-      },
-      {
-        "GuideNumber": "680",
-        "GuideName": "ADULT Xpanded2",
-        "URL": "http://192.168.123.10:5004/auto/v680"
       },
       {
         "GuideNumber": "699",
@@ -1155,118 +1062,42 @@
         "GuideName": "BBC Derby",
         "AudioCodec": "MPEG",
         "URL": "http://192.168.123.10:5004/auto/v735"
-      },
-      {
-        "GuideNumber": "790",
-        "GuideName": "5SELECT",
-        "URL": "http://192.168.123.10:5004/auto/v790"
-      },
-      {
-        "GuideNumber": "795",
-        "GuideName": "Arqiva Test Cha",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "AC3",
-        "URL": "http://192.168.123.10:5004/auto/v795"
-      },
-      {
-        "GuideNumber": "5000",
-        "GuideName": "ITV",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5000"
-      },
-      {
-        "GuideNumber": "5001",
-        "GuideName": "ITV3",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5001"
-      },
-      {
-        "GuideNumber": "5002",
-        "GuideName": "ITV +1",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5002"
-      },
-      {
-        "GuideNumber": "5003",
-        "GuideName": "Channel 4",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5003"
-      },
-      {
-        "GuideNumber": "5004",
-        "GuideName": "Film4",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5004"
-      },
-      {
-        "GuideNumber": "5005",
-        "GuideName": "More 4",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5005"
-      },
-      {
-        "GuideNumber": "5006",
-        "GuideName": "E4",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5006"
-      },
-      {
-        "GuideNumber": "5007",
-        "GuideName": "Channel 4+1",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "HD": 1,
-        "URL": "http://192.168.123.10:5004/auto/v5007"
-      },
-      {
-        "GuideNumber": "5008",
-        "GuideName": "E4+1",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5008"
-      },
-      {
-        "GuideNumber": "5009",
-        "GuideName": "5SELECT",
-        "VideoCodec": "H264",
-        "AudioCodec": "AAC",
-        "URL": "http://192.168.123.10:5004/auto/v5009"
-      },
-      {
-        "GuideNumber": "5010",
-        "GuideName": "Unknown",
-        "VideoCodec": "H264",
-        "AudioCodec": "AAC",
-        "HD": 1,
-        "URL": "http://192.168.123.10:5004/auto/v5010"
-      },
-      {
-        "GuideNumber": "5011",
-        "GuideName": "Unknown",
-        "VideoCodec": "MPEG2",
-        "AudioCodec": "MPEG",
-        "URL": "http://192.168.123.10:5004/auto/v5011"
       }
     ],
-    "status.json": [
+    "_device_auth_str": "**REDACTED**",
+    "_device_id": "**REDACTED**",
+    "_device_type": null,
+    "_discover_url": "http://192.168.123.10/discover.json",
+    "_friendly_name": "HDHomeRun CONNECT QUATRO",
+    "_lineup_url": "http://192.168.123.10:80/lineup.json",
+    "_sys_hwmodel": "HDHR5-4DT",
+    "_sys_model": "hdhomerun5_dvbt",
+    "_sys_version": "20220203",
+    "_tuner_count": 4,
+    "_tuner_status": [
       {
         "Resource": "tuner0"
       },
       {
-        "Resource": "tuner1"
+        "Resource": "tuner1",
+        "Frequency": 626171875,
+        "SignalStrengthPercent": 91,
+        "SignalQualityPercent": 100,
+        "SymbolQualityPercent": 100
       },
       {
-        "Resource": "tuner2"
+        "Resource": "tuner2",
+        "Frequency": 674000000,
+        "SignalStrengthPercent": 87,
+        "SignalQualityPercent": 100,
+        "SymbolQualityPercent": 100
       },
       {
-        "Resource": "tuner3"
+        "Resource": "tuner3",
+        "Frequency": 666000000,
+        "SignalStrengthPercent": 89,
+        "SignalQualityPercent": 100,
+        "SymbolQualityPercent": 100
       }
     ]
   }
