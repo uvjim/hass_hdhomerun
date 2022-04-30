@@ -87,28 +87,21 @@ class HDHomerunSensor(HDHomerunEntity, SensorEntity):
         self,
         config_entry: ConfigEntry,
         coordinator: DataUpdateCoordinator,
-        description: HDHomerunSensorEntityDescription
+        description: HDHomerunSensorEntityDescription,
+        hass: HomeAssistant,
     ) -> None:
         """Constructor"""
 
-        super().__init__(coordinator=coordinator, config_entry=config_entry)
+        super().__init__(config_entry=config_entry, coordinator=coordinator, hass=hass)
 
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
-
         self.entity_description: HDHomerunSensorEntityDescription = description
-
         self._attr_name = f"{ENTITY_SLUG} " \
                           f"{config_entry.title.replace(ENTITY_SLUG, '').strip()}: " \
                           f"{self.entity_description.name}"
         self._attr_unique_id = f"{config_entry.unique_id}::" \
                                f"{ENTITY_DOMAIN.lower()}::" \
                                f"{slugify(self.entity_description.name)}"
-
-    @property
-    def available(self) -> bool:
-        """"""
-
-        return self._device.online
 
     @property
     def native_value(self) -> StateType | date | datetime:
@@ -133,11 +126,12 @@ class HDHomerunTunerSensor(HDHomerunSensor):
         self,
         config_entry: ConfigEntry,
         coordinator: DataUpdateCoordinator,
-        description: HDHomerunSensorEntityDescription
+        description: HDHomerunSensorEntityDescription,
+        hass: HomeAssistant,
     ) -> None:
         """Constructor"""
 
-        super().__init__(coordinator=coordinator, config_entry=config_entry, description=description)
+        super().__init__(config_entry=config_entry, coordinator=coordinator, description=description, hass=hass)
 
         self._tuner: dict = self._get_tuner()
 
@@ -268,6 +262,7 @@ async def async_setup_entry(
             config_entry=config_entry,
             coordinator=cg,
             description=description,
+            hass=hass,
         )
         for description in SENSORS
     ]
@@ -280,7 +275,8 @@ async def async_setup_entry(
                 HDHomerunSensor(
                     config_entry=config_entry,
                     coordinator=cg,
-                    description=description
+                    description=description,
+                    hass=hass,
                 )
             )
     # endregion
@@ -297,7 +293,8 @@ async def async_setup_entry(
                         description=HDHomerunSensorEntityDescription(
                             key="",
                             name=tuner.get("Resource"),
-                        )
+                        ),
+                        hass=hass,
                     )
                 )
     # endregion
@@ -311,7 +308,8 @@ async def async_setup_entry(
                 HDHomerunSensor(
                     config_entry=config_entry,
                     coordinator=cg,
-                    description=description
+                    description=description,
+                    hass=hass,
                 )
             )
 
