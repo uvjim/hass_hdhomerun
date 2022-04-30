@@ -48,7 +48,6 @@ async def _async_reload(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Setup a config entry"""
 
-    tuner_coordinator: bool = True
     log_formatter = HDHomerunLogger(unique_id=config_entry.unique_id)
     _LOGGER.debug(log_formatter.message_format("entered"))
 
@@ -64,14 +63,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     if config_entry.source == "ssdp":  # force the discovery url because this should be available
         # noinspection HttpUrlsUsage
         setattr(hdhomerun_device, "_discover_url", f"http://{hdhomerun_device.ip}/discover.json")
-
-    try:
-        await hdhomerun_device.async_rediscover()
-    except Exception as err:
-        raise ConfigEntryNotReady(str(err))
-
-    if not hdhomerun_device.online:
-        raise ConfigEntryNotReady("Not currently online.")
 
     # region #-- set up the coordinators --#
     async def _async_data_coordinator_update() -> HDHomeRunDevice:
@@ -96,6 +87,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
         return hdhomerun_device
 
+    # noinspection DuplicatedCode
     coordinator_general: DataUpdateCoordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
@@ -106,18 +98,24 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_GENERAL] = coordinator_general
     await coordinator_general.async_config_entry_first_refresh()
 
-    if tuner_coordinator:
-        coordinator_tuner_status: DataUpdateCoordinator = DataUpdateCoordinator(
-            hass,
-            _LOGGER,
-            name=f"{DOMAIN}_tuner_status_{config_entry.unique_id}",
-            update_method=_async_data_coordinator_tuner_status_update,
-            update_interval=timedelta(
-                seconds=config_entry.options.get(CONF_SCAN_INTERVAL_TUNER_STATUS, DEF_SCAN_INTERVAL_TUNER_STATUS_SECS)
-            ),
-        )
-        hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_TUNER_STATUS] = coordinator_tuner_status
-        await coordinator_tuner_status.async_config_entry_first_refresh()
+    if not hdhomerun_device.online:
+        raise ConfigEntryNotReady("Not currently online.")
+
+    # noinspection DuplicatedCode
+    coordinator_tuner_status: DataUpdateCoordinator = DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        name=f"{DOMAIN}_tuner_status_{config_entry.unique_id}",
+        update_method=_async_data_coordinator_tuner_status_update,
+        update_interval=timedelta(
+            seconds=config_entry.options.get(CONF_SCAN_INTERVAL_TUNER_STATUS, DEF_SCAN_INTERVAL_TUNER_STATUS_SECS)
+        ),
+    )
+    hass.data[DOMAIN][config_entry.entry_id][CONF_DATA_COORDINATOR_TUNER_STATUS] = coordinator_tuner_status
+    await coordinator_tuner_status.async_config_entry_first_refresh()
+
+    if not hdhomerun_device.online:
+        raise ConfigEntryNotReady("Not currently online.")
     # endregion
 
     # region #-- setup the platforms --#
