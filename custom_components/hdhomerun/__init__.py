@@ -77,18 +77,20 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         )
 
     # region #-- set up the coordinators --#
-    async def _async_data_coordinator_update() -> HDHomeRunDevice:
+    async def _async_data_coordinator_update() -> bool:
         """"""
 
         try:
-            await hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICE].async_rediscover()
+            hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICE] = (
+                await hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICE].async_rediscover()
+            )
         except Exception as exc:
             _LOGGER.warning(log_formatter.message_format("%s"), exc)
             raise UpdateFailed(str(exc))
 
-        return hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICE]
+        return True
 
-    async def _async_data_coordinator_tuner_status_update() -> HDHomeRunDevice:
+    async def _async_data_coordinator_tuner_status_update() -> bool:
         """"""
 
         previous_availability: bool = hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICE].online
@@ -102,7 +104,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
             _LOGGER.debug(log_formatter.message_format("sending availability signal"))
             async_dispatcher_send(hass, SIGNAL_HDHOMERUN_DEVICE_AVAILABILITY)
 
-        return hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICE]
+        return True
 
     # noinspection DuplicatedCode
     coordinator_general: DataUpdateCoordinator = DataUpdateCoordinator(
