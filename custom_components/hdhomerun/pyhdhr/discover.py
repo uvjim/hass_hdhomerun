@@ -36,11 +36,7 @@ from .const import (
     HDHOMERUN_DISCOVER_UDP_PORT,
 )
 from .exceptions import (
-    HDHomeRunConnectionError,
-    HDHomeRunError,
     HDHomeRunHTTPDiscoveryNotAvailableError,
-    HDHomeRunUDPDiscoveryDeviceNotFoundError,
-    HDHomeRunTimeoutError,
 )
 from .protocol import HDHomeRunProtocol
 

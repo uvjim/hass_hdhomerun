@@ -105,6 +105,7 @@ class HDHomeRunDevice:
             resp_json = await resp.json()
             self._tuner_status = resp_json
 
+    # noinspection PyUnresolvedReferences
     async def _async_tuner_refresh_tcp(self) -> None:
         """Refresh the tuner information using the TCP control protocol
 
@@ -236,7 +237,7 @@ class HDHomeRunDevice:
             except asyncio.TimeoutError:
                 setattr(device, "_is_online", False)
                 _LOGGER.error("Timeout experienced reaching %s", device.lineup_url)
-            except aiohttp.ClientConnectorError as err:
+            except aiohttp.ClientConnectorError:
                 setattr(device, "_is_online", False)
             except Exception as err:
                 raise err from None
