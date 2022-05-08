@@ -1,7 +1,5 @@
 """Logging"""
 
-# test
-
 # region #-- imports --#
 import inspect
 # endregion
