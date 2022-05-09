@@ -248,6 +248,13 @@ class HDHomeRunDevice:
 
         return device
 
+    async def async_restart(self) -> None:
+        """"""
+
+        proto: HDHomeRunProtocol = HDHomeRunProtocol(host=self.ip)
+
+        await proto.async_restart()
+
     # region #-- properties --#
     @property
     def base_url(self) -> Optional[str]:
