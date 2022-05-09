@@ -23,7 +23,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-from homeassistant.util import slugify
 
 from . import (
     entity_cleanup,
@@ -32,7 +31,6 @@ from . import (
 from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
     DOMAIN,
-    ENTITY_SLUG,
 )
 from .pyhdhr import HDHomeRunDevice
 
@@ -135,15 +133,7 @@ class HDHomeRunButton(HDHomerunEntity, ButtonEntity, ABC):
         """Constructor"""
 
         self.ENTITY_DOMAIN = ENTITY_DOMAIN
-        super().__init__(config_entry=config_entry, coordinator=coordinator, hass=hass)
-
-        self.entity_description: HDHomeRunButtonDescription = description
-        self._attr_name = f"{ENTITY_SLUG} " \
-                          f"{config_entry.title.replace(ENTITY_SLUG, '').strip()}: " \
-                          f"{self.entity_description.name}"
-        self._attr_unique_id = f"{config_entry.unique_id}::" \
-                               f"{ENTITY_DOMAIN.lower()}::" \
-                               f"{slugify(self.entity_description.name)}"
+        super().__init__(config_entry=config_entry, coordinator=coordinator, description=description, hass=hass)
 
     async def async_press(self) -> None:
         """Handle the button being pressed"""
