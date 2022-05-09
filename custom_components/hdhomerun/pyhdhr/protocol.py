@@ -205,11 +205,17 @@ class HDHomeRunProtocol:
 
         return response
 
-    async def _get_set_req(self, value: str, timeout: Optional[int] = None) -> Dict[int | str, bytes]:
+    async def _get_set_req(
+        self,
+        tag: str,
+        timeout: Optional[int] = None,
+        value: Optional[str] = None
+    ) -> Dict[int | str, bytes]:
         """Build the query ready to send on to the device
 
-        :param value: the variable to query
+        :param tag: the variable to query
         :param timeout: timeout for the request
+        :param value: value for a set request
         :return: dictionary containing the response in the form
                     {
                         <tag|variable>: <response data>
@@ -218,8 +224,12 @@ class HDHomeRunProtocol:
 
         pkt_type: bytes = struct.pack(">H", HDHOMERUN_TYPE_GETSET_REQ)
         payload_data: List[Tuple[int, str]] = [
-            (HDHOMERUN_TAG_GETSET_NAME, value),
+            (HDHOMERUN_TAG_GETSET_NAME, tag),
         ]
+        if value is not None:
+            payload_data.append(
+                (HDHOMERUN_TAG_GETSET_VALUE, value)
+            )
         req: bytes = HDHomeRunProtocol.build_request(packet_payload=payload_data, packet_type=pkt_type)
 
         return await self._query(request=req, timeout=timeout)
@@ -259,7 +269,7 @@ class HDHomeRunProtocol:
         """
 
         value_name = "/sys/hwmodel"
-        return await self._get_set_req(value=value_name, timeout=timeout)
+        return await self._get_set_req(tag=value_name, timeout=timeout)
 
     async def get_model(self, timeout: Optional[int] = None) -> Dict[str, bytes]:
         """Get the firmware name
@@ -269,7 +279,7 @@ class HDHomeRunProtocol:
         """
 
         value_name = "/sys/model"
-        return await self._get_set_req(value=value_name, timeout=timeout)
+        return await self._get_set_req(tag=value_name, timeout=timeout)
 
     async def get_tuner_current_channel(self, tuner_idx, timeout: Optional[int] = None) -> Tuple[Dict[str, bytes], ...]:
         """Get the current channel information from the tuner
@@ -280,9 +290,9 @@ class HDHomeRunProtocol:
         """
 
         details = [
-            self._get_set_req(value=f"/tuner{tuner_idx}/program", timeout=timeout),
-            self._get_set_req(value=f"/tuner{tuner_idx}/streaminfo", timeout=timeout),
-            self._get_set_req(value=f"/tuner{tuner_idx}/target", timeout=timeout),
+            self._get_set_req(tag=f"/tuner{tuner_idx}/program", timeout=timeout),
+            self._get_set_req(tag=f"/tuner{tuner_idx}/streaminfo", timeout=timeout),
+            self._get_set_req(tag=f"/tuner{tuner_idx}/target", timeout=timeout),
         ]
 
         channel_details = await asyncio.gather(*details)
@@ -301,7 +311,7 @@ class HDHomeRunProtocol:
             raise ValueError
 
         value_name: str = f"/tuner{tuner_idx}/status"
-        return await self._get_set_req(value=value_name, timeout=timeout)
+        return await self._get_set_req(tag=value_name, timeout=timeout)
 
     async def get_version(self, timeout: Optional[int] = None) -> Dict[str, bytes]:
         """Get the firmware version
@@ -311,7 +321,7 @@ class HDHomeRunProtocol:
         """
 
         value_name = "/sys/version"
-        return await self._get_set_req(value=value_name, timeout=timeout)
+        return await self._get_set_req(tag=value_name, timeout=timeout)
 
     async def get_available_options(self, timeout: Optional[int] = None) -> List[str]:
         """Get the available variables that can be set/queried on the device
@@ -323,7 +333,7 @@ class HDHomeRunProtocol:
         ret: List[str] = []
         value_name: str = "help"
 
-        b_help: Dict[int | str, bytes] = await self._get_set_req(value=value_name, timeout=timeout)
+        b_help: Dict[int | str, bytes] = await self._get_set_req(tag=value_name, timeout=timeout)
         key: str = b_help.get("data", {})[HDHOMERUN_TAG_GETSET_NAME].decode()
         if key.rstrip("\0") == value_name:
             available_options: List[str] = b_help.get("data", {})[HDHOMERUN_TAG_GETSET_VALUE].decode().split("\n")
