@@ -18,6 +18,10 @@ available.
 - Update available - denotes whether there is a firmware update available 
   for the device *(only if using a HASS version below 2022.4)*
 
+#### Button
+
+- Restart - allows restarting a device
+
 #### Sensors
 
 - Channel Count - the number of channels currently tuned on the device
