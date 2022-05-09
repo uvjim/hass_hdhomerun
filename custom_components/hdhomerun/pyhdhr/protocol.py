@@ -343,3 +343,11 @@ class HDHomeRunProtocol:
             ]
 
         return ret
+
+    async def async_restart(self, timeout: Optional[int] = None) -> None:
+        """Instruct the device to do a restart"""
+
+        tag: str = "/sys/restart"
+        value: str = "self"
+
+        await self._get_set_req(tag=tag, timeout=timeout, value=value)
