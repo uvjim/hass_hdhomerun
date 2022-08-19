@@ -116,7 +116,7 @@ class HDHomeRunButton(HDHomerunEntity, ButtonEntity, ABC):
         hass: HomeAssistant,
     ) -> None:
         """Initialise."""
-        self.ENTITY_DOMAIN = ENTITY_DOMAIN
+        self.entity_domain = ENTITY_DOMAIN
         super().__init__(config_entry=config_entry, coordinator=coordinator, description=description, hass=hass)
 
     async def async_press(self) -> None:

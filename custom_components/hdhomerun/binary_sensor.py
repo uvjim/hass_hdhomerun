@@ -56,9 +56,9 @@ class HDHomerunBinarySensor(HDHomerunEntity, BinarySensorEntity):
         hass: HomeAssistant,
     ) -> None:
         """Initialise."""
-        self.ENTITY_DOMAIN = ENTITY_DOMAIN
-        super().__init__(config_entry=config_entry, coordinator=coordinator, description=description, hass=hass)
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self.entity_domain = ENTITY_DOMAIN
+        super().__init__(config_entry=config_entry, coordinator=coordinator, description=description, hass=hass)
 
     # region #-- properties --#
     @property
