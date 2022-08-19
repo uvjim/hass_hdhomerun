@@ -166,9 +166,14 @@ class HDHomerunEntity(CoordinatorEntity):
         if not getattr(self, "entity_domain", None):
             self.entity_domain: str = ""
 
-        self._attr_name = f"{ENTITY_SLUG} " \
-                          f"{config_entry.title.replace(ENTITY_SLUG, '').strip()}: " \
-                          f"{self.entity_description.name}"
+        try:
+            _ = self.has_entity_name
+            self._attr_has_entity_name = True
+            self._attr_name = self.entity_description.name
+        except AttributeError:
+            self._attr_name = f"{ENTITY_SLUG} " \
+                              f"{config_entry.title.replace(ENTITY_SLUG, '').strip()}: " \
+                              f"{self.entity_description.name}"
 
         self._attr_unique_id = f"{config_entry.unique_id}::" \
                                f"{self.entity_domain.lower()}::" \

@@ -251,7 +251,7 @@ async def async_setup_entry(
                     coordinator=coordinator_tuner,
                     description=HDHomerunSensorEntityDescription(
                         key="",
-                        name=tuner.get("Resource"),
+                        name=tuner.get("Resource").title(),
                     ),
                     hass=hass,
                 )
