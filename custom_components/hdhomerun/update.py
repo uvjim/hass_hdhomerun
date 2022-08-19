@@ -56,7 +56,7 @@ class HDHomerunUpdate(HDHomerunEntity, UpdateEntity, ABC):
         hass: HomeAssistant,
     ) -> None:
         """Initialise."""
-        self.ENTITY_DOMAIN = ENTITY_DOMAIN
+        self.entity_domain = ENTITY_DOMAIN
         super().__init__(config_entry=config_entry, coordinator=coordinator, description=description, hass=hass)
 
     @property

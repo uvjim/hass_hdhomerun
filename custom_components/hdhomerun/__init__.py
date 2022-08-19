@@ -148,8 +148,6 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
 class HDHomerunEntity(CoordinatorEntity):
     """Representation of an HDHomerun entity."""
 
-    ENTITY_DOMAIN: str
-
     def __init__(
         self,
         config_entry: ConfigEntry,
@@ -164,11 +162,16 @@ class HDHomerunEntity(CoordinatorEntity):
         self._device: HDHomeRunDevice = self._hass.data[DOMAIN][self._config.entry_id][CONF_DEVICE]
 
         self.entity_description = description
+
+        if not getattr(self, "entity_domain", None):
+            self.entity_domain: str = ""
+
         self._attr_name = f"{ENTITY_SLUG} " \
                           f"{config_entry.title.replace(ENTITY_SLUG, '').strip()}: " \
                           f"{self.entity_description.name}"
+
         self._attr_unique_id = f"{config_entry.unique_id}::" \
-                               f"{self.ENTITY_DOMAIN.lower()}::" \
+                               f"{self.entity_domain.lower()}::" \
                                f"{slugify(self.entity_description.name)}"
 
     async def async_added_to_hass(self) -> None:
