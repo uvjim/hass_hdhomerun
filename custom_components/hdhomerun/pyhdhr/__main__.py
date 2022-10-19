@@ -7,8 +7,7 @@ from typing import List, Optional
 
 import asyncclick as click
 
-from . import HDHomeRunDevice
-from .discover import Discover, DiscoverMode
+from .discover import Discover, DiscoverMode, HDHomeRunDevice
 from .logger import Logger
 
 # endregion

@@ -36,7 +36,7 @@ from .const import (
     DOMAIN,
     UPDATE_DOMAIN,
 )
-from .pyhdhr import HDHomeRunDevice
+from .pyhdhr.discover import HDHomeRunDevice
 
 # endregion
 

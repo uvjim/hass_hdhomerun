@@ -29,8 +29,7 @@ from .const import (
     DOMAIN,
 )
 from .logger import Logger
-from .pyhdhr import HDHomeRunDevice
-from .pyhdhr.discover import Discover
+from .pyhdhr.discover import Discover, HDHomeRunDevice
 from .pyhdhr.exceptions import (
     HDHomeRunDeviceNotFoundError,
     HDHomeRunError,
