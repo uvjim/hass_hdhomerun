@@ -22,7 +22,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import HDHomerunEntity, entity_cleanup
 from .const import CONF_DATA_COORDINATOR_GENERAL, DOMAIN
-from .pyhdhr import HDHomeRunDevice
+from .pyhdhr.discover import HDHomeRunDevice
 
 # endregion
 

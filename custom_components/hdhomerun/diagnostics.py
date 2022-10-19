@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import CONF_DEVICE, DOMAIN
-from .pyhdhr import HDHomeRunDevice
+from .pyhdhr.discover import HDHomeRunDevice
 
 # endregion
 

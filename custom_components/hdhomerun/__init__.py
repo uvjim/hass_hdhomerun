@@ -35,7 +35,7 @@ from .const import (
     SIGNAL_HDHOMERUN_DEVICE_AVAILABILITY,
 )
 from .logger import Logger
-from .pyhdhr import HDHomeRunDevice
+from .pyhdhr.discover import HDHomeRunDevice
 
 # endregion
 
