@@ -95,12 +95,12 @@ async def _async_button_pressed(
     action: str,
     device: HDHomeRunDevice,
     hass: HomeAssistant,
-    action_arguments: Optional[dict] = None,
+    action_arguments: dict | None = None,
 ) -> None:
     """Carry out the action for the button being pressed."""
-    action: Optional[Callable] = getattr(device, action, None)
-    signal: str = action_arguments.pop("signal", None)
-    if action and isinstance(action, Callable):
+    action: Callable | None = getattr(device, action, None)
+    signal: str | None = action_arguments.pop("signal", None)
+    if isinstance(action, Callable):
         if action_arguments is None:
             action_arguments = {}
         await action(**action_arguments)
@@ -134,6 +134,6 @@ class HDHomeRunButton(HDHomerunEntity, ButtonEntity, ABC):
         await _async_button_pressed(
             action=self.entity_description.press_action,
             action_arguments=self.entity_description.press_action_arguments.copy(),
-            device=self._device,
+            device=self.coordinator.data,
             hass=self.hass,
         )

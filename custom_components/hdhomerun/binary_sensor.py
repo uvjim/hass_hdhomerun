@@ -74,15 +74,13 @@ class HDHomerunBinarySensor(HDHomerunEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return if the service is on."""
-        if self._device:
-            if self.entity_description.key:
-                return self.entity_description.state_value(
-                    getattr(self._device, self.entity_description.key, None)
-                )
-            else:
-                return self.entity_description.state_value(self._device)
-        else:
-            return False
+        if self.coordinator.data:
+            if self.entity_description.state_value:
+                return self.entity_description.state_value(self.coordinator.data)
+
+            return getattr(self.coordinator.data, self.entity_description.key, None)
+
+        return False
 
     # endregion
 
