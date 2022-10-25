@@ -38,6 +38,42 @@ async def cli(ctx: click.Context = None, verbose: int = 0) -> None:
 
 
 @cli.command()
+@click.option("--source")
+@click.option("--target")
+async def channel_scan(source: str, target: str):
+    """Carry out a channel scan on the device."""
+    _LOGGER.debug(log_formatter.format("entered, args: %s"), locals())
+
+    device: List[HDHomeRunDevice] | HDHomeRunDevice = await Discover(
+        broadcast_address=target
+    ).async_discover()
+    if device:
+        device = device[0]
+        await device.async_gather_details()
+        await device.async_channel_scan_start(channel_source=source)
+        prev_progress: int = 0
+
+        with click.progressbar(
+            label="Channel scanning progress",
+            length=100,
+            show_eta=False,
+            show_percent=True,
+        ) as pbar:
+            while True:
+                progress: int | None = await device.async_get_channel_scan_progress()
+                if progress is None:
+                    pbar.update(100 - prev_progress)
+                    break
+
+                if prev_progress != progress:
+                    pbar.update(progress - prev_progress)
+                    prev_progress = progress
+                await asyncio.sleep(1)
+
+    _LOGGER.debug(log_formatter.format("exited"))
+
+
+@cli.command()
 @click.option("-b", "--broadcast-address", default="255.255.255.255")
 @click.option("-m", "--mode", default=DiscoverMode.AUTO.value)
 async def discover(
@@ -93,18 +129,6 @@ async def discover(
 
 @cli.command()
 @click.option("--target", required=True)
-async def restart(target: str) -> None:
-    """Issue a restart command to the device."""
-    _LOGGER.debug(log_formatter.format("entered, args: %s"), locals())
-
-    device: HDHomeRunDevice = HDHomeRunDevice(host=target)
-    await device.async_restart()
-
-    _LOGGER.debug(log_formatter.format("exited"))
-
-
-@cli.command()
-@click.option("--target", required=True)
 @click.option("--variable", required=True)
 async def get_variable(target: str, variable: str) -> None:
     """Retrieve a specific variable from the device."""
@@ -114,6 +138,18 @@ async def get_variable(target: str, variable: str) -> None:
     ret = await device.async_get_protocol_variable(name=variable)
 
     click.echo(ret)
+
+    _LOGGER.debug(log_formatter.format("exited"))
+
+
+@cli.command()
+@click.option("--target", required=True)
+async def restart(target: str) -> None:
+    """Issue a restart command to the device."""
+    _LOGGER.debug(log_formatter.format("entered, args: %s"), locals())
+
+    device: HDHomeRunDevice = HDHomeRunDevice(host=target)
+    await device.async_restart()
 
     _LOGGER.debug(log_formatter.format("exited"))
 
