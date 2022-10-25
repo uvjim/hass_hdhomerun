@@ -90,7 +90,6 @@ class HDHomeRunSelect(HDHomerunEntity, SelectEntity):
         """Initialise."""
         self._attr_current_option = None
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
-        self._attr_entity_registry_enabled_default = False
         self.entity_domain = ENTITY_DOMAIN
 
         super().__init__(
