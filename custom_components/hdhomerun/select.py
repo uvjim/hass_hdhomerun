@@ -72,7 +72,6 @@ async def async_setup_entry(
                 key="channel_sources",
                 name="Channel Sources",
             ),
-            hass=hass,
         )
     ]
 
@@ -87,7 +86,6 @@ class HDHomeRunSelect(HDHomerunEntity, SelectEntity):
         coordinator: DataUpdateCoordinator,
         config_entry: ConfigEntry,
         description: HDHomeRunSelectDescription,
-        hass: HomeAssistant,
     ) -> None:
         """Initialise."""
         self._attr_current_option = None
@@ -99,7 +97,6 @@ class HDHomeRunSelect(HDHomerunEntity, SelectEntity):
             config_entry=config_entry,
             coordinator=coordinator,
             description=description,
-            hass=hass,
         )
 
     async def async_select_option(self, option: str) -> None:
