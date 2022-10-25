@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import dataclasses
+import logging
 from datetime import datetime, timedelta
 from typing import Any, Callable, List, Mapping
 
@@ -33,6 +34,9 @@ from .const import (
 )
 
 # endregion
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 # region #-- binary sensor descriptions --#
@@ -284,6 +288,7 @@ class HDHomeRunRecurringBinarySensor(HDHomerunEntity, BinarySensorEntity):
                 target=self._async_action,
             )
         )
+        self._handle_coordinator_update()
 
     async def async_will_remove_from_hass(self) -> None:
         """Tidy up when removed."""
