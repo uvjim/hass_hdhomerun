@@ -69,6 +69,7 @@ class HDHomeRunDevice:
         self._session: aiohttp.ClientSession = aiohttp.ClientSession()
 
         self._base_url: str | None = None
+        self._channel_sources: List[str] | None = None
         self._device_auth_str: str | None = None
         self._device_id: str | None = None
         self._device_type: str | None = None
@@ -276,6 +277,20 @@ class HDHomeRunDevice:
         if self._discovery_method is DiscoverMode.UDP:
             await self._async_gather_details_udp()
 
+    async def async_get_channel_scan_progress(self, timeout: float = 2.5) -> int | None:
+        """Return the current channel scan progress as of now."""
+        try:
+            resp = await self._session.get(
+                url=f"{self.base_url}/{DevicePaths.LINEUP_STATUS}",
+                timeout=timeout,
+                raise_for_status=True,
+            )
+        except Exception as err:  # pylint: disable=broad-except
+            _LOGGER.error(self._log_formatter.format("type: %s, %s"), type(err), err)
+        else:
+            resp_json = await resp.json()
+            return resp_json.get("Progress", None)
+
     async def async_get_protocol_variable(
         self, name: str, timeout: float = 2.5
     ) -> Dict[str, int | str]:
@@ -303,11 +318,44 @@ class HDHomeRunDevice:
         proto: HDHomeRunProtocol = HDHomeRunProtocol(host=self.ip)
         await proto.async_restart()
 
+    async def async_channel_scan_start(self, channel_source: str) -> None:
+        """Start a channel scan on the device."""
+        _LOGGER.debug(self._log_formatter.format("entered"))
+        params = {
+            "scan": "start",
+            "source": channel_source,
+        }
+        await self._session.post(
+            url=f"{self.base_url}/{DevicePaths.LINEUP_ACTION}",
+            params=params,
+        )
+        _LOGGER.debug(self._log_formatter.format("exited"))
+
     # region #-- properties --#
     @property
     def base_url(self) -> str | None:
         """Get the base URL."""
         return self._raw_details.get("discover", {}).get("BaseURL", self._base_url)
+
+    @property
+    def channel_scanning(self) -> bool | None:
+        """Get whether the device is scanning for channels."""
+        in_progress: bool | None = self._raw_details.get("lineup_status", {}).get(
+            "ScanInProgress", None
+        )
+        if in_progress is not None:
+            return bool(in_progress)
+
+        return None
+
+    @property
+    def channel_sources(self) -> List[str] | None:
+        """Get the available sources for channels."""
+        if self._channel_sources is None:
+            self._channel_sources = self._raw_details.get("lineup_status", {}).get(
+                "SourceList", None
+            )
+        return self._channel_sources
 
     @property
     def channels(self) -> List[Dict[str, str]]:
