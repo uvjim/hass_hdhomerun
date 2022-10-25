@@ -321,6 +321,10 @@ class HDHomeRunDevice:
     async def async_channel_scan_start(self, channel_source: str) -> None:
         """Start a channel scan on the device."""
         _LOGGER.debug(self._log_formatter.format("entered"))
+
+        if not channel_source:
+            raise ValueError("Invalid channel source specified")
+
         params = {
             "scan": "start",
             "source": channel_source,
