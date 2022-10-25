@@ -137,6 +137,7 @@ class Discover:
 
             if self._broadcast_address != DEF_BROADCAST_ADDRESS:
                 discovered_devices = [HDHomeRunDevice(host=self._broadcast_address)]
+                setattr(discovered_devices[0], "_discovery_method", DiscoverMode.HTTP)
             already_discovered = [device.ip for device in discovered_devices]
             for device_ip in already_discovered:
                 discovered_idx = _find_in_discovered_devices(device_ip)
@@ -163,14 +164,11 @@ class Discover:
                             "_discovery_method",
                             DiscoverMode.HTTP,
                         )
-                    finally:
-                        if self._created_session:
-                            await self._session.close()
             # endregion
 
-        _LOGGER.debug(
-            self._log_formatter.format("discovered devices: %s"), discovered_devices
-        )
+        if self._created_session:
+            await self._session.close()
+
         if not discovered_devices:
             if self._broadcast_address == DEF_BROADCAST_ADDRESS:
                 raise HDHomeRunDeviceNotFoundError(device="no devices")
