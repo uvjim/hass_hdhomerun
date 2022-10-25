@@ -16,12 +16,20 @@ from homeassistant.components.button import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.dispatcher import (
+    async_dispatcher_connect,
+    async_dispatcher_send,
+)
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import HDHomerunEntity, entity_cleanup
-from .const import CONF_DATA_COORDINATOR_GENERAL, DOMAIN
+from .const import (
+    CONF_DATA_COORDINATOR_GENERAL,
+    DOMAIN,
+    SIGNAL_HDHOMERUN_CHANNEL_SCANNING_STARTED,
+    SIGNAL_HDHOMERUN_CHANNEL_SOURCE_CHANGE,
+)
 from .pyhdhr.discover import HDHomeRunDevice
 
 # endregion
@@ -50,11 +58,25 @@ class HDHomeRunButtonDescription(
 ):
     """Describes button entity."""
 
+    listen_for_signal: str | None = None
+    listen_for_signal_action: str | None = None
+
 
 # endregion
 
 
 BUTTON_DESCRIPTIONS: tuple[HDHomeRunButtonDescription, ...] = (
+    HDHomeRunButtonDescription(
+        key="",
+        listen_for_signal=SIGNAL_HDHOMERUN_CHANNEL_SOURCE_CHANGE,
+        listen_for_signal_action="_set_channel_source",
+        name="Channel Scan",
+        press_action="async_channel_scan_start",
+        press_action_arguments={
+            "signal": SIGNAL_HDHOMERUN_CHANNEL_SCANNING_STARTED,
+            "channel_source": lambda s: getattr(s, "_channel_source", None),
+        },
+    ),
     HDHomeRunButtonDescription(
         device_class=ButtonDeviceClass.RESTART,
         key="",
@@ -95,6 +117,7 @@ async def _async_button_pressed(
     action: str,
     device: HDHomeRunDevice,
     hass: HomeAssistant,
+    self: HDHomeRunButton,
     action_arguments: dict | None = None,
 ) -> None:
     """Carry out the action for the button being pressed."""
@@ -103,6 +126,9 @@ async def _async_button_pressed(
     if isinstance(action, Callable):
         if action_arguments is None:
             action_arguments = {}
+        for arg, value in action_arguments.items():
+            if isinstance(value, Callable):
+                action_arguments[arg] = value(self)
         await action(**action_arguments)
         if signal:
             async_dispatcher_send(hass, signal)
@@ -129,6 +155,25 @@ class HDHomeRunButton(HDHomerunEntity, ButtonEntity, ABC):
             hass=hass,
         )
 
+    def _set_channel_source(self, channel_source) -> None:
+        """Set the channel source."""
+        setattr(self, "_channel_source", channel_source)
+
+    async def async_added_to_hass(self) -> None:
+        """Carry out tasks when added to the regstry."""
+        if self.entity_description.listen_for_signal:
+            self.async_on_remove(
+                async_dispatcher_connect(
+                    hass=self.hass,
+                    signal=self.entity_description.listen_for_signal,
+                    target=getattr(
+                        self, self.entity_description.listen_for_signal_action, None
+                    ),
+                )
+            )
+
+        return await super().async_added_to_hass()
+
     async def async_press(self) -> None:
         """Handle the button being pressed."""
         await _async_button_pressed(
@@ -136,4 +181,5 @@ class HDHomeRunButton(HDHomerunEntity, ButtonEntity, ABC):
             action_arguments=self.entity_description.press_action_arguments.copy(),
             device=self.coordinator.data,
             hass=self.hass,
+            self=self,
         )

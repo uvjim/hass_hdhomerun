@@ -32,7 +32,6 @@ from .const import (
     DOMAIN,
     ENTITY_SLUG,
     PLATFORMS,
-    SIGNAL_HDHOMERUN_DEVICE_AVAILABILITY,
 )
 from .logger import Logger
 from .pyhdhr.const import DiscoverMode

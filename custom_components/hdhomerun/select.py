@@ -10,12 +10,17 @@ from homeassistant.components.select import DOMAIN as ENTITY_DOMAIN
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import HDHomerunEntity
-from .const import CONF_DATA_COORDINATOR_GENERAL, DOMAIN
+from .const import (
+    CONF_DATA_COORDINATOR_GENERAL,
+    DOMAIN,
+    SIGNAL_HDHOMERUN_CHANNEL_SOURCE_CHANGE,
+)
 
 # endregion
 
@@ -101,6 +106,11 @@ class HDHomeRunSelect(HDHomerunEntity, SelectEntity):
         """Select the option."""
         self._attr_current_option = option
         await self.async_update_ha_state()
+        async_dispatcher_send(
+            self.hass,
+            SIGNAL_HDHOMERUN_CHANNEL_SOURCE_CHANGE,
+            self._attr_current_option,
+        )
 
     @property
     def options(self) -> List[str] | None:

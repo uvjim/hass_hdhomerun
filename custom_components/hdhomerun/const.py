@@ -47,4 +47,5 @@ PLATFORMS = [
     UPDATE_DOMAIN,
 ]
 
-SIGNAL_HDHOMERUN_DEVICE_AVAILABILITY: str = f"{DOMAIN}_device_availability"
+SIGNAL_HDHOMERUN_CHANNEL_SCANNING_STARTED: str = f"{DOMAIN}_channel_scanning_started"
+SIGNAL_HDHOMERUN_CHANNEL_SOURCE_CHANGE: str = f"{DOMAIN}_channel_source_changed"
