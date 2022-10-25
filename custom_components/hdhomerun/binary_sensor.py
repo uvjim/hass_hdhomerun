@@ -89,7 +89,6 @@ async def async_setup_entry(
                 CONF_DATA_COORDINATOR_GENERAL
             ],
             description=description,
-            hass=hass,
         )
         for description in BINARY_SENSORS
     ]
@@ -126,7 +125,6 @@ async def async_setup_entry(
                         CONF_DATA_COORDINATOR_GENERAL
                     ],
                     description=description,
-                    hass=hass,
                 )
             )
     # endregion
@@ -145,7 +143,6 @@ async def async_setup_entry(
                         CONF_DATA_COORDINATOR_GENERAL
                     ],
                     description=description,
-                    hass=hass,
                 )
             )
 
@@ -164,7 +161,6 @@ class HDHomerunBinarySensor(HDHomerunEntity, BinarySensorEntity):
         config_entry: ConfigEntry,
         coordinator: DataUpdateCoordinator,
         description: HDHomerunBinarySensorEntityDescription,
-        hass: HomeAssistant,
     ) -> None:
         """Initialise."""
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
@@ -173,7 +169,6 @@ class HDHomerunBinarySensor(HDHomerunEntity, BinarySensorEntity):
             config_entry=config_entry,
             coordinator=coordinator,
             description=description,
-            hass=hass,
         )
 
     @property
@@ -222,7 +217,6 @@ class HDHomeRunRecurringBinarySensor(HDHomerunEntity, BinarySensorEntity):
             config_entry=config_entry,
             coordinator=coordinator,
             description=description,
-            hass=self.hass,
         )
 
     def _handle_coordinator_update(self) -> None:

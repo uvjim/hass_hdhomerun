@@ -101,7 +101,6 @@ async def async_setup_entry(
             config_entry=config_entry,
             coordinator=coordinator,
             description=button_description,
-            hass=hass,
         )
         for button_description in BUTTON_DESCRIPTIONS
     ]
@@ -144,7 +143,6 @@ class HDHomeRunButton(HDHomerunEntity, ButtonEntity, ABC):
         coordinator: DataUpdateCoordinator,
         config_entry: ConfigEntry,
         description: HDHomeRunButtonDescription,
-        hass: HomeAssistant,
     ) -> None:
         """Initialise."""
         self.entity_domain = ENTITY_DOMAIN
@@ -152,7 +150,6 @@ class HDHomeRunButton(HDHomerunEntity, ButtonEntity, ABC):
             config_entry=config_entry,
             coordinator=coordinator,
             description=description,
-            hass=hass,
         )
 
     def _set_channel_source(self, channel_source) -> None:

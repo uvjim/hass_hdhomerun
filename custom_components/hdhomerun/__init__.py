@@ -172,13 +172,11 @@ class HDHomerunEntity(CoordinatorEntity):
         config_entry: ConfigEntry,
         coordinator: DataUpdateCoordinator,
         description,
-        hass: HomeAssistant,
     ) -> None:
         """Initialize the entity."""
         super().__init__(coordinator)
 
         self._config: ConfigEntry = config_entry
-        self._hass: HomeAssistant = hass
 
         self.entity_description = description
 
