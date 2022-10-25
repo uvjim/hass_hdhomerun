@@ -9,10 +9,7 @@ import homeassistant.helpers.entity_registry as er
 from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
 from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.dispatcher import (
-    async_dispatcher_connect,
-    async_dispatcher_send,
-)
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -24,7 +21,6 @@ from homeassistant.util import slugify
 from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
     CONF_DATA_COORDINATOR_TUNER_STATUS,
-    CONF_DEVICE,
     CONF_HOST,
     CONF_SCAN_INTERVAL_TUNER_STATUS,
     DEF_SCAN_INTERVAL_SECS,
@@ -69,7 +65,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
                 ].data
             ) is None:
                 device = await Discover(
-                    broadcast_address=config_entry.data.get(CONF_HOST)
+                    broadcast_address=config_entry.data.get(CONF_HOST),
+                    session=async_get_clientsession(hass=hass),
                 ).async_discover()
                 if device:
                     device = device[0]
@@ -90,7 +87,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
                 ].data
             ) is None:
                 device = await Discover(
-                    broadcast_address=config_entry.data.get(CONF_HOST)
+                    broadcast_address=config_entry.data.get(CONF_HOST),
+                    session=async_get_clientsession(hass=hass),
                 ).async_discover()
                 if device:
                     device = device[0]
@@ -203,10 +201,6 @@ class HDHomerunEntity(CoordinatorEntity):
             f"{self.entity_domain.lower()}::"
             f"{slugify(self.entity_description.name)}"
         )
-
-    async def async_added_to_hass(self) -> None:
-        """Do stuff when entity is added to registry."""
-        await super().async_added_to_hass()
 
     @property
     def device_info(self) -> DeviceInfo:
