@@ -106,7 +106,7 @@ async def async_setup_entry(
                         "progress": r,
                     },
                     key="channel_scanning",
-                    name="Channel scanning",
+                    name="Channel Scanning",
                 ),
                 recurrence_interval=5,
                 recurrence_trigger=SIGNAL_HDHOMERUN_CHANNEL_SCANNING_STARTED,
