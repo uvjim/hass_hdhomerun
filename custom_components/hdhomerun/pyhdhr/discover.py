@@ -135,6 +135,8 @@ class Discover:
 
                 return None
 
+            if self._broadcast_address != DEF_BROADCAST_ADDRESS:
+                discovered_devices = [HDHomeRunDevice(host=self._broadcast_address)]
             already_discovered = [device.ip for device in discovered_devices]
             for device_ip in already_discovered:
                 discovered_idx = _find_in_discovered_devices(device_ip)
@@ -172,8 +174,8 @@ class Discover:
         if not discovered_devices:
             if self._broadcast_address == DEF_BROADCAST_ADDRESS:
                 raise HDHomeRunDeviceNotFoundError(device="no devices")
-            else:
-                raise HDHomeRunDeviceNotFoundError(device=self._broadcast_address)
+
+            raise HDHomeRunDeviceNotFoundError(device=self._broadcast_address)
         _LOGGER.debug(self._log_formatter.format("exited"))
         return discovered_devices
 
