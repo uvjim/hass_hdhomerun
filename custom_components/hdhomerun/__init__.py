@@ -3,7 +3,7 @@
 # region #-- imports --#
 import logging
 from datetime import timedelta
-from typing import List
+from typing import Any, Callable, List, Mapping
 
 import homeassistant.helpers.entity_registry as er
 from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
@@ -226,6 +226,16 @@ class HDHomerunEntity(CoordinatorEntity):
             if self.coordinator.data
             else "",
         )
+
+    @property
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        """Additional attributes for the entity."""
+        if hasattr(self.entity_description, "extra_attributes") and isinstance(
+            self.entity_description.extra_attributes, Callable
+        ):
+            return self.entity_description.extra_attributes(self.coordinator.data)
+
+        return None
 
 
 # endregion
