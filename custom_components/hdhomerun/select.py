@@ -72,6 +72,7 @@ async def async_setup_entry(
                 config_entry=config_entry,
                 coordinator=coordinator,
                 description=HDHomeRunSelectDescription(
+                    entity_category=EntityCategory.CONFIG,
                     key="channel_sources",
                     name="Channel Sources",
                 ),
@@ -92,7 +93,6 @@ class HDHomeRunSelect(HDHomerunEntity, SelectEntity):
     ) -> None:
         """Initialise."""
         self._attr_current_option = None
-        self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self.entity_domain = ENTITY_DOMAIN
 
         super().__init__(
