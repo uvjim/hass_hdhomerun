@@ -81,7 +81,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Create the button."""
-    coordinator = hass.data[DOMAIN][config_entry.entry_id][
+    coordinator: DataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
         CONF_DATA_COORDINATOR_GENERAL
     ]
 
