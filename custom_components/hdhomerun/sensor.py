@@ -53,6 +53,7 @@ class RequiredHDHomerunSensorDescription:
 class OptionalHDHomerunSensorDescription:
     """Represent the optional attributes of the sensor description."""
 
+    extra_attributes: Callable | None = None
     state_value: Optional[Callable[[Any], Any]] = None
 
 
@@ -69,6 +70,38 @@ class HDHomerunSensorEntityDescription(
 
 
 SENSORS: tuple[HDHomerunSensorEntityDescription, ...] = (
+    HDHomerunSensorEntityDescription(
+        extra_attributes=lambda d: (
+            {
+                "channels": [
+                    channel.get("GuideName", None)
+                    for channel in d.channels
+                    if channel.get("Enabled", None) == 0
+                ]
+            }
+        ),
+        key="channels",
+        name="Disabled Channels",
+        state_value=lambda d: len(
+            [channel for channel in d if channel.get("Enabled", None) == 0]
+        ),
+    ),
+    HDHomerunSensorEntityDescription(
+        extra_attributes=lambda d: (
+            {
+                "channels": [
+                    channel.get("GuideName", None)
+                    for channel in d.channels
+                    if channel.get("Favorite", None) == 1
+                ]
+            }
+        ),
+        key="channels",
+        name="Favourite Channels",
+        state_value=lambda d: len(
+            [channel for channel in d if channel.get("Favorite", None) == 1]
+        ),
+    ),
     HDHomerunSensorEntityDescription(
         key="channels",
         name="Channel Count",
