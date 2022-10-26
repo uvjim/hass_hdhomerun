@@ -72,6 +72,7 @@ class HDHomerunSensorEntityDescription(
 
 SENSORS: tuple[HDHomerunSensorEntityDescription, ...] = (
     HDHomerunSensorEntityDescription(
+        icon="mdi:transmission-tower-import",
         key="tuner_count",
         name="Tuner Count",
     ),
@@ -154,6 +155,7 @@ async def async_setup_entry(
                                 ]
                             }
                         ),
+                        icon="mdi:playlist-remove",
                         key="channels",
                         name="Disabled Channels",
                         state_value=lambda d: len(
@@ -178,6 +180,7 @@ async def async_setup_entry(
                                 ]
                             }
                         ),
+                        icon="mdi:playlist-star",
                         key="channels",
                         name="Favourite Channels",
                         state_value=lambda d: len(
@@ -193,6 +196,7 @@ async def async_setup_entry(
                     config_entry=config_entry,
                     coordinator=coordinator_general,
                     description=HDHomerunSensorEntityDescription(
+                        icon="mdi:text-long",
                         key="channels",
                         name="Channel Count",
                         # pylint: disable=unnecessary-lambda
