@@ -36,6 +36,7 @@ from .const import (
     DOMAIN,
     UPDATE_DOMAIN,
 )
+from .pyhdhr.const import DiscoverMode
 from .pyhdhr.discover import HDHomeRunDevice
 
 # endregion
@@ -70,43 +71,6 @@ class HDHomerunSensorEntityDescription(
 
 
 SENSORS: tuple[HDHomerunSensorEntityDescription, ...] = (
-    HDHomerunSensorEntityDescription(
-        extra_attributes=lambda d: (
-            {
-                "channels": [
-                    channel.get("GuideName", None)
-                    for channel in d.channels
-                    if channel.get("Enabled", None) == 0
-                ]
-            }
-        ),
-        key="channels",
-        name="Disabled Channels",
-        state_value=lambda d: len(
-            [channel for channel in d if channel.get("Enabled", None) == 0]
-        ),
-    ),
-    HDHomerunSensorEntityDescription(
-        extra_attributes=lambda d: (
-            {
-                "channels": [
-                    channel.get("GuideName", None)
-                    for channel in d.channels
-                    if channel.get("Favorite", None) == 1
-                ]
-            }
-        ),
-        key="channels",
-        name="Favourite Channels",
-        state_value=lambda d: len(
-            [channel for channel in d if channel.get("Favorite", None) == 1]
-        ),
-    ),
-    HDHomerunSensorEntityDescription(
-        key="channels",
-        name="Channel Count",
-        state_value=lambda d: len(d),  # pylint: disable=unnecessary-lambda
-    ),
     HDHomerunSensorEntityDescription(
         key="tuner_count",
         name="Tuner Count",
@@ -171,6 +135,72 @@ async def async_setup_entry(
                     ),
                 )
             )
+    # endregion
+
+    # region #-- add conditional sensors --#
+    if coordinator_general.data.discovery_method is DiscoverMode.HTTP:
+        sensors.extend(
+            [
+                HDHomerunSensor(
+                    config_entry=config_entry,
+                    coordinator=coordinator_general,
+                    description=HDHomerunSensorEntityDescription(
+                        extra_attributes=lambda d: (
+                            {
+                                "channels": [
+                                    channel.get("GuideName", None)
+                                    for channel in d.channels
+                                    if channel.get("Enabled", None) == 0
+                                ]
+                            }
+                        ),
+                        key="channels",
+                        name="Disabled Channels",
+                        state_value=lambda d: len(
+                            [
+                                channel
+                                for channel in d
+                                if channel.get("Enabled", None) == 0
+                            ]
+                        ),
+                    ),
+                ),
+                HDHomerunSensor(
+                    config_entry=config_entry,
+                    coordinator=coordinator_general,
+                    description=HDHomerunSensorEntityDescription(
+                        extra_attributes=lambda d: (
+                            {
+                                "channels": [
+                                    channel.get("GuideName", None)
+                                    for channel in d.channels
+                                    if channel.get("Favorite", None) == 1
+                                ]
+                            }
+                        ),
+                        key="channels",
+                        name="Favourite Channels",
+                        state_value=lambda d: len(
+                            [
+                                channel
+                                for channel in d
+                                if channel.get("Favorite", None) == 1
+                            ]
+                        ),
+                    ),
+                ),
+                HDHomerunSensor(
+                    config_entry=config_entry,
+                    coordinator=coordinator_general,
+                    description=HDHomerunSensorEntityDescription(
+                        key="channels",
+                        name="Channel Count",
+                        # pylint: disable=unnecessary-lambda
+                        state_value=lambda d: len(d),
+                    ),
+                ),
+            ]
+        )
     # endregion
 
     # region #-- add default sensors --#
