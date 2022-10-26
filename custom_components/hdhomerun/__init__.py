@@ -21,6 +21,7 @@ from homeassistant.util import slugify
 from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
     CONF_DATA_COORDINATOR_TUNER_STATUS,
+    CONF_DISCOVERY_MODE,
     CONF_HOST,
     CONF_SCAN_INTERVAL_TUNER_STATUS,
     DEF_DISCOVERY_MODE,
@@ -67,7 +68,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
             ) is None:
                 device = await Discover(
                     broadcast_address=config_entry.data.get(CONF_HOST),
-                    mode=DEF_DISCOVERY_MODE,
+                    mode=DiscoverMode(
+                        config_entry.options.get(
+                            CONF_DISCOVERY_MODE, DEF_DISCOVERY_MODE.value
+                        )
+                    ),
                     session=async_get_clientsession(hass=hass),
                 ).async_discover()
                 if device:
@@ -90,7 +95,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
             ) is None:
                 device = await Discover(
                     broadcast_address=config_entry.data.get(CONF_HOST),
-                    mode=DEF_DISCOVERY_MODE,
+                    mode=DiscoverMode(
+                        config_entry.options.get(
+                            CONF_DISCOVERY_MODE, DEF_DISCOVERY_MODE.value
+                        )
+                    ),
                     session=async_get_clientsession(hass=hass),
                 ).async_discover()
                 if device:
