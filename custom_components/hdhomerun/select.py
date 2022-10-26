@@ -64,16 +64,19 @@ async def async_setup_entry(
         CONF_DATA_COORDINATOR_GENERAL
     ]
 
-    selects: List[HDHomeRunSelect] = [
-        HDHomeRunSelect(
-            config_entry=config_entry,
-            coordinator=coordinator,
-            description=HDHomeRunSelectDescription(
-                key="channel_sources",
-                name="Channel Sources",
-            ),
+    selects: List[HDHomeRunSelect] = []
+
+    if coordinator.data.channel_sources:
+        selects.append(
+            HDHomeRunSelect(
+                config_entry=config_entry,
+                coordinator=coordinator,
+                description=HDHomeRunSelectDescription(
+                    key="channel_sources",
+                    name="Channel Sources",
+                ),
+            )
         )
-    ]
 
     async_add_entities(selects)
 
