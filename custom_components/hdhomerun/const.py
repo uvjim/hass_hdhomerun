@@ -11,6 +11,9 @@ try:
     from homeassistant.components.update import DOMAIN as UPDATE_DOMAIN
 except ImportError:
     UPDATE_DOMAIN = None
+
+from .pyhdhr.const import DiscoverMode
+
 # endregion
 
 DOMAIN: str = "hdhomerun"
@@ -33,6 +36,7 @@ CONF_TUNER_CHANNEL_AVAILABLE_FORMATS: dict = {
     CONF_TUNER_CHANNEL_NUMBER_NAME: "Channel number and name, e.g. 101: BBC One HD",
 }
 
+DEF_DISCOVERY_MODE: DiscoverMode = DiscoverMode.AUTO
 DEF_SCAN_INTERVAL_SECS: int = 300
 DEF_SCAN_INTERVAL_TUNER_STATUS_SECS: int = 10
 DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH: str = ""

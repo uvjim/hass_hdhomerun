@@ -23,6 +23,7 @@ from .const import (
     CONF_DATA_COORDINATOR_TUNER_STATUS,
     CONF_HOST,
     CONF_SCAN_INTERVAL_TUNER_STATUS,
+    DEF_DISCOVERY_MODE,
     DEF_SCAN_INTERVAL_SECS,
     DEF_SCAN_INTERVAL_TUNER_STATUS_SECS,
     DOMAIN,
@@ -66,6 +67,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
             ) is None:
                 device = await Discover(
                     broadcast_address=config_entry.data.get(CONF_HOST),
+                    mode=DEF_DISCOVERY_MODE,
                     session=async_get_clientsession(hass=hass),
                 ).async_discover()
                 if device:
@@ -88,10 +90,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
             ) is None:
                 device = await Discover(
                     broadcast_address=config_entry.data.get(CONF_HOST),
+                    mode=DEF_DISCOVERY_MODE,
                     session=async_get_clientsession(hass=hass),
                 ).async_discover()
                 if device:
                     device = device[0]
+            await device.async_gather_details()
             await device.async_refresh_tuner_status()
         except Exception as exc:
             _LOGGER.warning(log_formatter.format("%s"), exc)
