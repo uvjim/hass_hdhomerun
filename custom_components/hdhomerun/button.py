@@ -100,6 +100,7 @@ async def async_setup_entry(
                 config_entry=config_entry,
                 coordinator=coordinator,
                 description=HDHomeRunButtonDescription(
+                    icon="mdi:text-search",
                     key="",
                     listen_for_signal=SIGNAL_HDHOMERUN_CHANNEL_SOURCE_CHANGE,
                     listen_for_signal_action="_set_channel_source",
