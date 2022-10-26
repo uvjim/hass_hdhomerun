@@ -264,7 +264,7 @@ class HDHomerunTunerSensor(HDHomerunEntity, SensorEntity):
                 ret = f"{self._tuner.get('VctNumber')}: {self._tuner.get('VctName')}"
             else:
                 ret = None
-        elif self._tuner.get("Frequency"):
+        elif self._tuner.get("TargetIP"):
             ret = STATE_IN_USE
 
         return ret
