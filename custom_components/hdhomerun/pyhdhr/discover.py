@@ -150,7 +150,7 @@ class Discover:
                             discovered_devices[discovered_idx].discovery_method
                             is DiscoverMode.HTTP
                         ):
-                            _LOGGER.warning(
+                            _LOGGER.debug(
                                 "%s is not available locally over HTTP, setting to UDP only",
                                 device_ip,
                             )
