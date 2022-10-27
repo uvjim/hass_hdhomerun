@@ -104,11 +104,20 @@ class HDHomeRunDevice:
     @needs_http
     async def _async_gather_details_http(self) -> None:
         """Gather details for an HTTP discovered device."""
-        requests: List[aiohttp.ClientRequest] = [
-            self._session.get(
+        # region #-- get the information from the discover url first --#
+        try:
+            resp = await self._session.get(
                 url=f"http://{self.ip}/{DevicePaths.DISCOVER}",
                 raise_for_status=True,
-            ),
+            )
+        except Exception:  # pylint: disable=broad-except
+            pass
+        else:
+            key: str = resp.url.name.split(".")[0]
+            self._raw_details[key] = await resp.json()
+        # endregion
+
+        requests: List[aiohttp.ClientRequest] = [
             self._session.get(
                 url=self.lineup_url or f"http://{self.ip}/{DevicePaths.LINEUP}",
                 params={
