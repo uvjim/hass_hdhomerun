@@ -110,7 +110,7 @@ class HDHomeRunDevice:
                 raise_for_status=True,
             ),
             self._session.get(
-                url=f"http://{self.ip}/{DevicePaths.LINEUP}",
+                url=self.lineup_url or f"http://{self.ip}/{DevicePaths.LINEUP}",
                 params={
                     "show": "found",
                 },
