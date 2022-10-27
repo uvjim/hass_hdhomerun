@@ -132,7 +132,10 @@ class Discover:
 
                 return None
 
-            if self._broadcast_address != DEF_BROADCAST_ADDRESS:
+            if (
+                self._broadcast_address != DEF_BROADCAST_ADDRESS
+                and self._mode is DiscoverMode.HTTP
+            ):
                 discovered_devices = [HDHomeRunDevice(host=self._broadcast_address)]
                 setattr(discovered_devices[0], "_discovery_method", DiscoverMode.HTTP)
             already_discovered = [device.ip for device in discovered_devices]
