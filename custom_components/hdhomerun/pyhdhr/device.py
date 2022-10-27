@@ -105,9 +105,15 @@ class HDHomeRunDevice:
     async def _async_gather_details_http(self) -> None:
         """Gather details for an HTTP discovered device."""
         # region #-- get the information from the discover url first --#
+        _LOGGER.debug(self._log_formatter.format("entered"))
+
         try:
+            url: str = f"http://{self.ip}/{DevicePaths.DISCOVER}"
+            _LOGGER.debug(
+                self._log_formatter.format("attempting gather details from: %s"), url
+            )
             resp = await self._session.get(
-                url=f"http://{self.ip}/{DevicePaths.DISCOVER}",
+                url=url,
                 raise_for_status=True,
             )
         except Exception:  # pylint: disable=broad-except
@@ -115,18 +121,23 @@ class HDHomeRunDevice:
         else:
             key: str = resp.url.name.split(".")[0]
             self._raw_details[key] = await resp.json()
+            _LOGGER.debug(
+                self._log_formatter.format("results for %s: %s"),
+                key,
+                self._raw_details[key],
+            )
         # endregion
 
         requests: List[aiohttp.ClientRequest] = [
             self._session.get(
-                url=self.lineup_url or f"http://{self.ip}/{DevicePaths.LINEUP}",
+                url=self.lineup_url,
                 params={
                     "show": "found",
                 },
                 raise_for_status=True,
             ),
             self._session.get(
-                url=f"http://{self.ip}/{DevicePaths.LINEUP_STATUS}",
+                url=f"{self.base_url}/{DevicePaths.LINEUP_STATUS}",
                 raise_for_status=True,
             ),
         ]
@@ -135,6 +146,11 @@ class HDHomeRunDevice:
         for resp in responses:
             key: str = resp.url.name.split(".")[0]
             self._raw_details[key] = await resp.json()
+            _LOGGER.debug(
+                self._log_formatter.format("results for %s: %s"),
+                key,
+                self._raw_details[key],
+            )
 
     async def _async_gather_details_udp(self) -> None:
         """Gather details via TCP/UDP for a UDP discovered device."""
