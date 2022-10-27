@@ -12,29 +12,50 @@ protocol, the TCP control protocol and the HTTP API.
 ### Entities Provided
 
 Where applicable the sub-items in the list detail the additional attributes
-available.
+available. All entities may not be available to you depending on how the
+device was discovered and what its capabilities are.
 
 #### Binary Sensors
 
+* Channel Scanning - denotes whether a channel scan is in progress
+  * percentage progress
 * Update available - denotes whether there is a firmware update available
   for the device _(only if using a HASS version below 2022.4)_
 
 #### Button
 
+* Channel Scan - instructs the device to carry out a channel scan using the
+selected source
 * Restart - allows restarting a device
+
+#### Select
+
+* Channel Sources - allows selecting the channel source to be used when carrying
+out a channel scan
 
 #### Sensors
 
 * Channel Count - the number of channels currently tuned on the device
-* Version - the current firmware version of the device _(only if using a
-  HASS version below 2022.4)_
-* Tuner Count - the number of tuners the device has
+* Disabled Channels - the number of channels marked as disabled in the channel
+list
+  * list of channel names
+* Favourite Channels - the number of channels marked as favorites in the channel
+list
+  * list of channel names
 * Newest Version - the latest version of firmware available for the device
   _(only if using a HASS version below 2022.4)_
+* Tuner Count - the number of tuners the device has
 * Tuner X - where X is the tuner number (states can be: `Idle`, `In use`,
   `Scanning` or the channel being watched, using the specified format)
   * virtual channel number, virtual channel name, frequency, signal strength,
     signal quality, symbol quality, network rate and target IP (as applicable)
+* Version - the current firmware version of the device _(only if using a
+  HASS version below 2022.4)_
+
+#### Update
+
+* Update - used to show if a firmware update is required _(only if using a HASS
+version later than 2022.4)_
 
 ## Setup
 
