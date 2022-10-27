@@ -116,8 +116,10 @@ class HDHomeRunDevice:
                 url=url,
                 raise_for_status=True,
             )
-        except Exception:  # pylint: disable=broad-except
-            pass
+        except Exception as err:  # pylint: disable=broad-except
+            _LOGGER.debug(
+                self._log_formatter.format("error with local discovery: %s"), err
+            )
         else:
             key: str = resp.url.name.split(".")[0]
             self._raw_details[key] = await resp.json()
@@ -134,17 +136,24 @@ class HDHomeRunDevice:
                 params={
                     "show": "found",
                 },
-                raise_for_status=True,
             ),
             self._session.get(
                 url=f"{self.base_url}/{DevicePaths.LINEUP_STATUS}",
-                raise_for_status=True,
             ),
         ]
 
         responses: List[aiohttp.ClientResponse] = await asyncio.gather(*requests)
         for resp in responses:
             key: str = resp.url.name.split(".")[0]
+            if not resp.ok:
+                _LOGGER.debug(
+                    self._log_formatter.format("%s failed with error %d - %s"),
+                    key,
+                    resp.status,
+                    resp.reason,
+                )
+                continue
+
             self._raw_details[key] = await resp.json()
             _LOGGER.debug(
                 self._log_formatter.format("results for %s: %s"),
