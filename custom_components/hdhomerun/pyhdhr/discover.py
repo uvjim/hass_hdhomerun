@@ -151,10 +151,14 @@ class Discover:
                             is DiscoverMode.HTTP
                         ):
                             _LOGGER.warning(
-                                "%s is not available locally, removing from discovered devices",
+                                "%s is not available locally over HTTP, setting to UDP only",
                                 device_ip,
                             )
-                            discovered_devices.pop(discovered_idx)
+                            setattr(
+                                discovered_devices[discovered_idx],
+                                "_discovery_method",
+                                DiscoverMode.UDP,
+                            )
                     else:
                         setattr(
                             discovered_devices[discovered_idx],
