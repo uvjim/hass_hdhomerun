@@ -78,7 +78,7 @@ class HDHomeRunDevice:
         """Friendly representation of the device."""
         return f"{self.__class__.__name__} {self._host}"
 
-]    def get_from_datagram(
+    def get_from_datagram(
         self, tag: int, device_details: HDHomeRunDevice | None = None
     ) -> str | None:
         """Grab the data from the processed datagram."""
