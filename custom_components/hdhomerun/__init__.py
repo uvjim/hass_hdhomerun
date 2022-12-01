@@ -7,6 +7,7 @@ import logging
 from datetime import timedelta
 from typing import Any, Callable, List, Mapping
 
+import homeassistant.helpers.device_registry as dr
 import homeassistant.helpers.entity_registry as er
 from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
 from homeassistant.const import CONF_SCAN_INTERVAL
@@ -80,6 +81,26 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
                 if device:
                     device = device[0]
             await device.async_gather_details()
+            device_registry: dr.DeviceRegistry = dr.async_get(hass=hass)
+            device_entry: List[dr.DeviceEntry] = [
+                device_details
+                for _, device_details in device_registry.devices.items()
+                if (DOMAIN, config_entry.unique_id) in device_details.identifiers
+            ]
+            if device_entry:
+                if device.installed_version != device_entry[0].sw_version:
+                    _LOGGER.debug(
+                        log_formatter.format(
+                            "Firmware version changed from %s to %s, updating device"
+                        ),
+                        device_entry[0].sw_version,
+                        device.installed_version,
+                    )
+
+                    device_registry.async_update_device(
+                        device_id=device_entry[0].id,
+                        sw_version=device.installed_version,
+                    )
         except Exception as exc:
             _LOGGER.warning(log_formatter.format("%s"), exc)
             raise UpdateFailed(str(exc)) from exc
