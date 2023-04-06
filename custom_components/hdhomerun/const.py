@@ -5,12 +5,7 @@ from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAI
 from homeassistant.components.button import DOMAIN as BUTTON_DOMAIN
 from homeassistant.components.select import DOMAIN as SELECT_DOMAIN
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
-
-# TODO: remove try/except when minimum version of HASS is 2022.4.0
-try:
-    from homeassistant.components.update import DOMAIN as UPDATE_DOMAIN
-except ImportError:
-    UPDATE_DOMAIN = None
+from homeassistant.components.update import DOMAIN as UPDATE_DOMAIN
 
 from .pyhdhr.const import DiscoverMode
 
