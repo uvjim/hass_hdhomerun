@@ -15,14 +15,17 @@ from homeassistant import config_entries, data_entry_flow
 from homeassistant.components import ssdp
 from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import callback
+from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
     CONF_HOST,
     CONF_SCAN_INTERVAL_TUNER_STATUS,
-    CONF_TUNER_CHANNEL_AVAILABLE_FORMATS,
     CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
     CONF_TUNER_CHANNEL_FORMAT,
+    CONF_TUNER_CHANNEL_NAME,
+    CONF_TUNER_CHANNEL_NUMBER,
+    CONF_TUNER_CHANNEL_NUMBER_NAME,
     DEF_SCAN_INTERVAL_SECS,
     DEF_SCAN_INTERVAL_TUNER_STATUS_SECS,
     DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
@@ -80,7 +83,18 @@ async def _async_build_schema_with_user_input(step: str, user_input=None) -> vol
                 default=user_input.get(
                     CONF_TUNER_CHANNEL_FORMAT, DEF_TUNER_CHANNEL_FORMAT
                 ),
-            ): vol.In(CONF_TUNER_CHANNEL_AVAILABLE_FORMATS),
+            ): selector.SelectSelector(
+                config=selector.SelectSelectorConfig(
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                    multiple=False,
+                    options=[
+                        CONF_TUNER_CHANNEL_NAME,
+                        CONF_TUNER_CHANNEL_NUMBER,
+                        CONF_TUNER_CHANNEL_NUMBER_NAME,
+                    ],
+                    translation_key="channel_format",
+                ),
+            ),
         }
 
     if step == STEP_SELECT_DEVICE:
