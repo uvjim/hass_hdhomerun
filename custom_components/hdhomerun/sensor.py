@@ -71,9 +71,9 @@ class HDHomerunSensorEntityDescription(
 # endregion
 
 
-STATE_IDLE = "Idle"
-STATE_IN_USE = "In use"
-STATE_SCANNING = "Scanning"
+STATE_IDLE = "idle"
+STATE_IN_USE = "in_use"
+STATE_SCANNING = "scanning"
 
 
 async def async_setup_entry(
@@ -149,6 +149,7 @@ async def async_setup_entry(
                     description=HDHomerunSensorEntityDescription(
                         key="",
                         name=tuner.get("Resource").title(),
+                        translation_key="tuner_status",
                     ),
                 )
             )
