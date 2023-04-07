@@ -47,6 +47,20 @@
             "channel_sources": {
                 "name": "Channel Sources"
             }
+        },
+        "sensor": {
+            "channel_count": {
+                "name": "Channel Count"
+            },
+            "disabled_channels": {
+                "name": "Disabled Channels"
+            },
+            "fav_channels": {
+                "name": "Favourite Channels"
+            },
+            "tuner_count": {
+                "name": "Tuner Count"
+            }
         }
     },
     "options": {
