@@ -14,6 +14,7 @@ from homeassistant.components.sensor import DOMAIN as ENTITY_DOMAIN
 from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
+    SensorStateClass,
     StateType,
 )
 from homeassistant.config_entries import ConfigEntry
@@ -173,6 +174,7 @@ async def async_setup_entry(
                         icon="mdi:playlist-remove",
                         key="channels",
                         name="Disabled Channels",
+                        state_class=SensorStateClass.MEASUREMENT,
                         state_value=lambda d: len(
                             [
                                 channel
@@ -199,6 +201,7 @@ async def async_setup_entry(
                         icon="mdi:playlist-star",
                         key="channels",
                         name="Favourite Channels",
+                        state_class=SensorStateClass.MEASUREMENT,
                         state_value=lambda d: len(
                             [
                                 channel
@@ -216,6 +219,7 @@ async def async_setup_entry(
                         icon="mdi:text-long",
                         key="channels",
                         name="Channel Count",
+                        state_class=SensorStateClass.MEASUREMENT,
                         # pylint: disable=unnecessary-lambda
                         state_value=lambda d: len(d),
                         translation_key="channel_count",
@@ -235,6 +239,7 @@ async def async_setup_entry(
                     icon="mdi:transmission-tower-import",
                     key="tuner_count",
                     name="Tuner Count",
+                    state_class=SensorStateClass.MEASUREMENT,
                     translation_key="tuner_count",
                 ),
             )
