@@ -60,6 +60,13 @@
             },
             "tuner_count": {
                 "name": "Tuner Count"
+            },
+            "tuner_status": {
+                "state": {
+                    "idle": "Idle",
+                    "in_use": "In use",
+                    "scanning": "Scanning"
+                }
             }
         },
         "update": {
