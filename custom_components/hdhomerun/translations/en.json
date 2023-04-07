@@ -29,6 +29,13 @@
         },
         "title": "HDHomeRun"
     },
+    "entity": {
+        "binary_sensor": {
+            "channel_scanning": {
+                "name": "Channel Scanning"
+            }
+        }
+    },
     "options": {
         "step": {
             "options": {
