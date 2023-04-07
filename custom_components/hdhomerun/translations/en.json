@@ -61,6 +61,11 @@
             "tuner_count": {
                 "name": "Tuner Count"
             }
+        },
+        "update": {
+            "update": {
+                "name": "Firmware"
+            }
         }
     },
     "options": {
