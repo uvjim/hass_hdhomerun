@@ -9,7 +9,6 @@ import logging
 from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
-import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant import config_entries, data_entry_flow
 from homeassistant.components import ssdp
