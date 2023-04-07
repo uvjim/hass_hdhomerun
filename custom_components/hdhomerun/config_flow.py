@@ -66,7 +66,7 @@ async def _async_build_schema_with_user_input(step: str, user_input=None) -> vol
         schema = {
             vol.Required(
                 CONF_FRIENDLY_NAME, default=user_input.get(CONF_FRIENDLY_NAME, "")
-            ): str,
+            ): selector.TextSelector(),
         }
 
     if step == STEP_OPTIONS:
@@ -77,7 +77,7 @@ async def _async_build_schema_with_user_input(step: str, user_input=None) -> vol
                     CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
                     DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
                 ),
-            ): cv.string,
+            ): selector.TextSelector(),
             vol.Required(
                 CONF_TUNER_CHANNEL_FORMAT,
                 default=user_input.get(
@@ -99,9 +99,13 @@ async def _async_build_schema_with_user_input(step: str, user_input=None) -> vol
 
     if step == STEP_SELECT_DEVICE:
         schema = {
-            vol.Required(
-                CONF_HOST,
-            ): vol.In(user_input)
+            vol.Required(CONF_HOST,): selector.SelectSelector(
+                config=selector.SelectSelectorConfig(
+                    mode=selector.SelectSelectorMode.LIST,
+                    multiple=False,
+                    options=user_input,
+                ),
+            ),
         }
 
     if step == STEP_TIMEOUTS:
@@ -109,18 +113,34 @@ async def _async_build_schema_with_user_input(step: str, user_input=None) -> vol
             vol.Optional(
                 CONF_SCAN_INTERVAL,
                 default=user_input.get(CONF_SCAN_INTERVAL, DEF_SCAN_INTERVAL_SECS),
-            ): cv.positive_int,
+            ): selector.NumberSelector(
+                config=selector.NumberSelectorConfig(
+                    max=86400,
+                    min=1,
+                    mode=selector.NumberSelectorMode.BOX,
+                    unit_of_measurement="seconds",
+                )
+            ),
             vol.Optional(
                 CONF_SCAN_INTERVAL_TUNER_STATUS,
                 default=user_input.get(
                     CONF_SCAN_INTERVAL_TUNER_STATUS, DEF_SCAN_INTERVAL_TUNER_STATUS_SECS
                 ),
-            ): cv.positive_int,
+            ): selector.NumberSelector(
+                config=selector.NumberSelectorConfig(
+                    max=86400,
+                    min=1,
+                    mode=selector.NumberSelectorMode.BOX,
+                    unit_of_measurement="seconds",
+                )
+            ),
         }
 
     if step == STEP_USER:
         schema = {
-            vol.Optional(CONF_HOST, default=user_input.get(CONF_HOST, "")): str,
+            vol.Optional(
+                CONF_HOST, default=user_input.get(CONF_HOST, "")
+            ): selector.TextSelector(),
         }
 
     return vol.Schema(schema)
@@ -277,12 +297,15 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, Logger, domain=DOMAIN):
             self._errors = {}
             self._host = user_input.get(CONF_HOST)
             self._friendly_name = self._discovered_devices.get(self._host)
+            _LOGGER.debug(self.format("friendly_name: %s"), self._friendly_name)
             serial = [
                 dev.device_id
                 for dev in self._discovered_devices_hd
                 if dev.ip == self._host
             ][0]
-            await self.async_set_unique_id(unique_id=serial)
+            _LOGGER.debug(self.format("serial: %s"), serial)
+            _LOGGER.debug(self.format("setting unique_id to: %s"), serial)
+            await self.async_set_unique_id(unique_id=serial, raise_on_progress=False)
             return await self.async_step_friendly_name()
 
         # region #-- build the names to show as options --#
@@ -310,7 +333,11 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, Logger, domain=DOMAIN):
         return self.async_show_form(
             step_id=STEP_SELECT_DEVICE,
             data_schema=await _async_build_schema_with_user_input(
-                STEP_SELECT_DEVICE, user_input=self._discovered_devices
+                STEP_SELECT_DEVICE,
+                user_input=[
+                    {"label": dev_name, "value": dev_ip}
+                    for dev_ip, dev_name in self._discovered_devices.items()
+                ],
             ),
             errors=self._errors,
             last_step=False,

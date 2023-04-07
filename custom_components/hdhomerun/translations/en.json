@@ -40,8 +40,8 @@
             },
             "timeouts": {
                 "data": {
-                    "scan_interval": "Scan interval (in seconds)",
-                    "scan_interval_tuner_status": "Tuner status update (in seconds)"
+                    "scan_interval": "Scan interval",
+                    "scan_interval_tuner_status": "Tuner status update"
                 },
                 "title": "Timeouts"
             }
