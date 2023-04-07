@@ -34,6 +34,14 @@
             "channel_scanning": {
                 "name": "Channel Scanning"
             }
+        },
+        "button": {
+            "channel_scan": {
+                "name": "Channel Scan"
+            },
+            "restart": {
+                "name": "Restart"
+            }
         }
     },
     "options": {
