@@ -29,6 +29,45 @@
         },
         "title": "HDHomeRun"
     },
+    "entity": {
+        "binary_sensor": {
+            "channel_scanning": {
+                "name": "Channel Scanning"
+            }
+        },
+        "button": {
+            "channel_scan": {
+                "name": "Channel Scan"
+            },
+            "restart": {
+                "name": "Restart"
+            }
+        },
+        "select": {
+            "channel_sources": {
+                "name": "Channel Sources"
+            }
+        },
+        "sensor": {
+            "channel_count": {
+                "name": "Channel Count"
+            },
+            "disabled_channels": {
+                "name": "Disabled Channels"
+            },
+            "fav_channels": {
+                "name": "Favourite Channels"
+            },
+            "tuner_count": {
+                "name": "Tuner Count"
+            }
+        },
+        "update": {
+            "update": {
+                "name": "Firmware"
+            }
+        }
+    },
     "options": {
         "step": {
             "options": {

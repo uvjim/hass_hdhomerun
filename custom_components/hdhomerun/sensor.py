@@ -70,26 +70,6 @@ class HDHomerunSensorEntityDescription(
 # endregion
 
 
-SENSORS: tuple[HDHomerunSensorEntityDescription, ...] = (
-    HDHomerunSensorEntityDescription(
-        icon="mdi:transmission-tower-import",
-        key="tuner_count",
-        name="Tuner Count",
-    ),
-)
-
-SENSOR_VERSIONS: tuple[HDHomerunSensorEntityDescription, ...] = (
-    HDHomerunSensorEntityDescription(
-        key="current_firmware",
-        name="Version",
-    ),
-    HDHomerunSensorEntityDescription(
-        key="",
-        name="Newest Version",
-        state_value=lambda d: d.latest_firmware or d.current_firmware,
-    ),
-)
-
 STATE_IDLE = "Idle"
 STATE_IN_USE = "In use"
 STATE_SCANNING = "Scanning"
@@ -109,17 +89,52 @@ async def async_setup_entry(
     ]
 
     sensors: List[HDHomerunSensor] = []
+    sensors_to_remove: List[HDHomerunSensor] = []
 
     # region #-- add version sensors if need be --#
     if UPDATE_DOMAIN is None:
-        for description in SENSOR_VERSIONS:
-            sensors.append(
+        sensors.extend(
+            [
                 HDHomerunSensor(
                     config_entry=config_entry,
                     coordinator=coordinator_general,
-                    description=description,
-                )
-            )
+                    description=HDHomerunSensorEntityDescription(
+                        key="current_firmware",
+                        name="Version",
+                    ),
+                ),
+                HDHomerunSensor(
+                    config_entry=config_entry,
+                    coordinator=coordinator_general,
+                    description=HDHomerunSensorEntityDescription(
+                        key="",
+                        name="Newest Version",
+                        state_value=lambda d: d.latest_firmware or d.current_firmware,
+                    ),
+                ),
+            ]
+        )
+    else:  # remove the existing version sensors if the update entity is available
+        sensors_to_remove.extend(
+            [
+                HDHomerunSensor(
+                    config_entry=config_entry,
+                    coordinator=coordinator_general,
+                    description=HDHomerunSensorEntityDescription(
+                        key="current_firmware",
+                        name="Version",
+                    ),
+                ),
+                HDHomerunSensor(
+                    config_entry=config_entry,
+                    coordinator=coordinator_general,
+                    description=HDHomerunSensorEntityDescription(
+                        key="",
+                        name="Newest Version",
+                    ),
+                ),
+            ]
+        )
     # endregion
 
     # region #-- add tuner sensors --#
@@ -165,6 +180,7 @@ async def async_setup_entry(
                                 if channel.get("Enabled", None) == 0
                             ]
                         ),
+                        translation_key="disabled_channels",
                     ),
                 ),
                 HDHomerunSensor(
@@ -190,6 +206,7 @@ async def async_setup_entry(
                                 if channel.get("Favorite", None) == 1
                             ]
                         ),
+                        translation_key="fav_channels",
                     ),
                 ),
                 HDHomerunSensor(
@@ -201,6 +218,7 @@ async def async_setup_entry(
                         name="Channel Count",
                         # pylint: disable=unnecessary-lambda
                         state_value=lambda d: len(d),
+                        translation_key="channel_count",
                     ),
                 ),
             ]
@@ -213,26 +231,18 @@ async def async_setup_entry(
             HDHomerunSensor(
                 config_entry=config_entry,
                 coordinator=coordinator_general,
-                description=description,
+                description=HDHomerunSensorEntityDescription(
+                    icon="mdi:transmission-tower-import",
+                    key="tuner_count",
+                    name="Tuner Count",
+                    translation_key="tuner_count",
+                ),
             )
-            for description in SENSORS
         ]
     )
     # endregion
 
     async_add_entities(sensors)
-
-    sensors_to_remove: List[HDHomerunSensor] = []
-    # remove the existing version sensors if the update entity is available
-    if UPDATE_DOMAIN is not None:
-        for description in SENSOR_VERSIONS:
-            sensors_to_remove.append(
-                HDHomerunSensor(
-                    config_entry=config_entry,
-                    coordinator=coordinator_general,
-                    description=description,
-                )
-            )
 
     if sensors_to_remove:
         entity_cleanup(config_entry=config_entry, entities=sensors_to_remove, hass=hass)
