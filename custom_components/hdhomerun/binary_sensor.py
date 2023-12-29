@@ -239,8 +239,10 @@ class HDHomeRunRecurringBinarySensor(HDHomerunEntity, BinarySensorEntity):
             raise RuntimeError("State processor is not callable") from None
 
         state_method_results: Any = await state_method()
-        if isinstance(self.entity_description.extra_attributes, Callable):
-            self._esa = self.entity_description.extra_attributes(state_method_results)
+        if isinstance(self._additional_description.extra_attributes, Callable):
+            self._esa = self._additional_description.extra_attributes(
+                state_method_results
+            )
         temp_state: bool = self._state_processor(state_method_results)
         if temp_state:
             if self._remove_action_interval is None:
