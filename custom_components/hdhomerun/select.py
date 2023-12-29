@@ -26,7 +26,7 @@ from .const import (
 
 
 # region #-- select entity descriptions --#
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class AdditionalSelectDescription:
     """Represent additional options for the select entity."""
 

@@ -40,7 +40,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 # region #-- binary sensor descriptions --#
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class AdditionalBinarySensorDescription:
     """Represent additional options for the binary sensor entity."""
 
