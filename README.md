@@ -18,36 +18,36 @@ device was discovered and what its capabilities are.
 #### Binary Sensors
 
 * Channel Scanning - denotes whether a channel scan is in progress
-  * percentage progress
+  * Percentage progress
 * Update available - denotes whether there is a firmware update available
   for the device _(only if using a HASS version below 2022.4)_
 
 #### Button
 
 * Channel Scan - instructs the device to carry out a channel scan using the
-selected source
+  selected source
 * Restart - allows restarting a device
 
 #### Select
 
 * Channel Sources - allows selecting the channel source to be used when carrying
-out a channel scan
+  out a channel scan
 
 #### Sensors
 
 * Channel Count - the number of channels currently tuned on the device
 * Disabled Channels - the number of channels marked as disabled in the channel
 list
-  * list of channel names
+  * List of channel names
 * Favourite Channels - the number of channels marked as favorites in the channel
 list
-  * list of channel names
+  * List of channel names
 * Newest Version - the latest version of firmware available for the device
   _(only if using a HASS version below 2022.4)_
 * Tuner Count - the number of tuners the device has
 * Tuner X - where X is the tuner number (states can be: `Idle`, `In use`,
   `Scanning` or the channel being watched, using the specified format)
-  * virtual channel number, virtual channel name, frequency, signal strength,
+  * Virtual channel number, virtual channel name, frequency, signal strength,
     signal quality, symbol quality, network rate and target IP (as applicable)
 * Version - the current firmware version of the device _(only if using a
   HASS version below 2022.4)_
@@ -55,7 +55,7 @@ list
 #### Update
 
 * Update - used to show if a firmware update is required _(only if using a HASS
-version later than 2022.4)_
+  version later than 2022.4)_
 
 ## Setup
 
@@ -66,21 +66,22 @@ following information will be requested.
 
 ![Initial Setup Screen](images/step_user.png)
 
-* `Host`: (required) The IP of an HDHomeRun device on the network. Leave
+* `Host`: The IP of an HDHomeRun device on the network. Leave
   blank to carry out discovery.
 
->Provide a valid IP address, and you will be prompted for a friendly name.
->
->![Initial Setup Screen](images/friendly_name.png)
+  * If you provide a valid IP address, and you will be prompted for
+    a friendly name.
+
+    ![Initial Setup Screen](images/friendly_name.png)
 
 ### HTTP/UDP Discovery
 
-> This section is only applicable if you did not provide a host in this
-> [section](#ManualAdd)
+This section is only applicable if you did not provide a host in the
+[Add Integration](#ManualAdd) section.
 
 ![HTTP/UDP Discovery](images/http_udp_discovery.png)
 
-Click NEXT and you will be prompted for a friendly name.
+Click `NEXT` and you will be prompted for a friendly name.
 
 ![Initial Setup Screen](images/friendly_name.png)
 
@@ -118,7 +119,7 @@ It is possible to configure the following options for the integration.
 
 * `Channel logo path` - the path to a directory containing channel logos,
   e.g. `/local/channel_logos`. The default is to have no logo. If previously
-  set you can clear this option by just entering a space.
+  set, you can clear this option by just entering a space
 
 You can also select which format should be used for the sensor. The
 default is `Channel name`.
@@ -129,8 +130,8 @@ _This setting is only effective when a tuner is actively tuned to a channel._
 
 ### Debug Logging
 
-Debug logging can be enabled in Home Assistant using the `logger`
-integration see [here](https://www.home-assistant.io/integrations/logger/).
+Debug logging can be enabled in Home Assistant using the [`logger`
+integration](https://www.home-assistant.io/integrations/logger/).
 
 ```yaml
 logger:
@@ -141,7 +142,7 @@ logger:
 
 ### Diagnostics Integration
 
-Starting with Home Assistant 2022.2 a new diagnostics integration can be
+Starting with Home Assistant 2022.2, a new diagnostics integration can be
 used to provide troubleshooting for integrations.
 
 The highlighted area in the image below shows where the link for downloading
@@ -149,4 +150,4 @@ diagnostics can be found.
 
 ![Diagnostics](images/diagnostics.png)
 
-Example output can be found [here](examples/diagnostics_output.json)
+An [example output](examples/diagnostics_output.json) can be found in this repo.
