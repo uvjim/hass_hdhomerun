@@ -45,14 +45,18 @@ list
 * Newest Version - the latest version of firmware available for the device
   _(only if using a HASS version below 2022.4)_
 * Tuner Count - the number of tuners the device has
-* Tuner X - where X is the tuner number (states can be: `Idle`, `In use`,
-  `Scanning` or the channel being watched, using the specified format)
-  * Virtual channel number, virtual channel name, frequency, signal strength,
-    signal quality, symbol quality, network rate and target IP (as applicable)
+* Tuner X Status (where X is the tuner number) - Shows the tuner status. It can 
+be: `Idle`, `In use`, `Scanning` or the channel being watched, using the 
+specified format
+* Tuner X Signal Quality - The signal quality as indicated by the tuner
+* Tuner X Signal Strength - The signal strength as indicated by the tuner
 * Version - the current firmware version of the device _(only if using a
   HASS version below 2022.4)_
 
 #### Update
+
+* Update - adds signal quality and strength by tuner, and change the tuner
+status sensor name. 
 
 * Update - used to show if a firmware update is required _(only if using a HASS
   version later than 2022.4)_

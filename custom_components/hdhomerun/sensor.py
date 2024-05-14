@@ -131,13 +131,35 @@ async def async_setup_entry(
     if hdhomerun_device is not None:
         for tuner in hdhomerun_device.tuner_status:
             sensors.append(
-                HDHomerunTunerSensor(
+                HDHomerunTunerStatusSensor(
                     config_entry=config_entry,
                     coordinator=coordinator_tuner,
                     description=SensorEntityDescription(
                         key="",
-                        name=tuner.get("Resource").title(),
+                        name=tuner.get("Resource").title() + "_status",
                         translation_key="tuner_status",
+                    ),
+                )
+            )
+
+            sensors.append(
+                HDHomerunTunerSignalQualitySensor(
+                    config_entry=config_entry,
+                    coordinator=coordinator_tuner,
+                    description=SensorEntityDescription(
+                        key="",
+                        name=tuner.get("Resource").title() + "_signal_quality"
+                    ),
+                )
+            )
+
+            sensors.append(
+                HDHomerunTunerSignalStrengthSensor(
+                    config_entry=config_entry,
+                    coordinator=coordinator_tuner,
+                    description=SensorEntityDescription(
+                        key="",
+                        name=tuner.get("Resource").title() + "_signal_strength"
                     ),
                 )
             )
@@ -292,8 +314,8 @@ class HDHomerunSensor(HDHomerunEntity, SensorEntity):
         return None
 
 
-class HDHomerunTunerSensor(HDHomerunEntity, SensorEntity):
-    """Representation of an HDHomeRun tuner."""
+class HDHomerunTunerStatusSensor(HDHomerunEntity, SensorEntity):
+    """Representation of an HDHomeRun tuner status.""" 
 
     def __init__(
         self,
@@ -319,7 +341,7 @@ class HDHomerunTunerSensor(HDHomerunEntity, SensorEntity):
         for _tuner in self.coordinator.data.tuner_status:
             if (
                 _tuner.get("Resource", "").lower()
-                == self.entity_description.name.lower()
+                == self.entity_description.name.lower().split("_")[0]
             ):
                 tuner = _tuner
                 break
@@ -396,5 +418,126 @@ class HDHomerunTunerSensor(HDHomerunEntity, SensorEntity):
         """Get the value of the sensor."""
         return self._value()
 
+class HDHomerunTunerSignalQualitySensor(HDHomerunEntity, SensorEntity):
+    """Representation of an HDHomeRun tuner signal quality."""
+
+    def __init__(
+        self,
+        config_entry: ConfigEntry,
+        coordinator: DataUpdateCoordinator,
+        description: SensorEntityDescription,
+    ) -> None:
+        """Initialise."""
+        self.entity_domain = ENTITY_DOMAIN
+        super().__init__(
+            config_entry=config_entry,
+            coordinator=coordinator,
+            description=description,
+        )
+
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+
+        self._tuner: dict = self._get_tuner()
+
+    def _get_tuner(self) -> Dict[str, int | str]:
+        """Get the tuner information from the coordinator."""
+        tuner: Dict[str, int | str] = {}
+        for _tuner in self.coordinator.data.tuner_status:
+            if (
+                _tuner.get("Resource", "").lower()
+                == self.entity_description.name.lower().split("_")[0]
+            ):
+                tuner = _tuner
+                break
+
+        return tuner
+
+    def _handle_coordinator_update(self) -> None:
+        """Update the device information when the coordinator updates."""
+        super()._handle_coordinator_update()
+        self._tuner = self._get_tuner()
+
+    def _value(self) -> StateType | date | datetime:
+        """Determine the value of the sensor."""
+        ret = None
+        if self._tuner.get("SignalQualityPercent"):
+            ret = self._tuner.get("SignalQualityPercent")
+
+        return ret
+
+    @property
+    def icon(self) -> Optional[str]:
+        """Get the icon for the sensor."""
+        ret = "mdi:signal"
+        if self._value() == None:
+            ret = "mdi:signal-off"
+
+        return ret
+
+    @property
+    def native_value(self) -> StateType | date | datetime:
+        """Get the value of the sensor."""
+        return self._value()
+
+class HDHomerunTunerSignalStrengthSensor(HDHomerunEntity, SensorEntity):
+    """Representation of an HDHomeRun tuner signal quality."""
+
+    def __init__(
+        self,
+        config_entry: ConfigEntry,
+        coordinator: DataUpdateCoordinator,
+        description: SensorEntityDescription,
+    ) -> None:
+        """Initialise."""
+        self.entity_domain = ENTITY_DOMAIN
+        super().__init__(
+            config_entry=config_entry,
+            coordinator=coordinator,
+            description=description,
+        )
+
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+
+        self._tuner: dict = self._get_tuner()
+
+    def _get_tuner(self) -> Dict[str, int | str]:
+        """Get the tuner information from the coordinator."""
+        tuner: Dict[str, int | str] = {}
+        for _tuner in self.coordinator.data.tuner_status:
+            if (
+                _tuner.get("Resource", "").lower()
+                == self.entity_description.name.lower().split("_")[0]
+            ):
+                tuner = _tuner
+                break
+
+        return tuner
+
+    def _handle_coordinator_update(self) -> None:
+        """Update the device information when the coordinator updates."""
+        super()._handle_coordinator_update()
+        self._tuner = self._get_tuner()
+
+    def _value(self) -> StateType | date | datetime:
+        """Determine the value of the sensor."""
+        ret = None
+        if self._tuner.get("SignalStrengthPercent"):
+            ret = self._tuner.get("SignalStrengthPercent")
+
+        return ret
+
+    @property
+    def icon(self) -> Optional[str]:
+        """Get the icon for the sensor."""
+        ret = "mdi:signal"
+        if self._value() == None:
+            ret = "mdi:signal-off"
+
+        return ret
+
+    @property
+    def native_value(self) -> StateType | date | datetime:
+        """Get the value of the sensor."""
+        return self._value()
 
 # endregion
