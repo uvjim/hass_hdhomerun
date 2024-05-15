@@ -143,9 +143,10 @@ async def async_setup_entry(
             )
 
             sensors.append(
-                HDHomerunTunerSignalQualitySensor(
+                HDHomerunTunerSignalSensor(
                     config_entry=config_entry,
                     coordinator=coordinator_tuner,
+                    api_parameter="SignalQualityPercent",
                     description=SensorEntityDescription(
                         key="",
                         name=tuner.get("Resource").title() + "_signal_quality"
@@ -154,9 +155,10 @@ async def async_setup_entry(
             )
 
             sensors.append(
-                HDHomerunTunerSignalStrengthSensor(
+                HDHomerunTunerSignalSensor(
                     config_entry=config_entry,
                     coordinator=coordinator_tuner,
+                    api_parameter="SignalStrengthPercent",
                     description=SensorEntityDescription(
                         key="",
                         name=tuner.get("Resource").title() + "_signal_strength"
@@ -418,17 +420,19 @@ class HDHomerunTunerStatusSensor(HDHomerunEntity, SensorEntity):
         """Get the value of the sensor."""
         return self._value()
 
-class HDHomerunTunerSignalQualitySensor(HDHomerunEntity, SensorEntity):
-    """Representation of an HDHomeRun tuner signal quality."""
+class HDHomerunTunerSignalSensor(HDHomerunEntity, SensorEntity):
+    """Representation of an HDHomeRun tuner signal parameters."""
 
     def __init__(
         self,
         config_entry: ConfigEntry,
         coordinator: DataUpdateCoordinator,
+        api_parameter: api_parameter,
         description: SensorEntityDescription,
     ) -> None:
         """Initialise."""
         self.entity_domain = ENTITY_DOMAIN
+        self.api_parameter = api_parameter
         super().__init__(
             config_entry=config_entry,
             coordinator=coordinator,
@@ -460,69 +464,8 @@ class HDHomerunTunerSignalQualitySensor(HDHomerunEntity, SensorEntity):
     def _value(self) -> StateType | date | datetime:
         """Determine the value of the sensor."""
         ret = None
-        if self._tuner.get("SignalQualityPercent"):
-            ret = self._tuner.get("SignalQualityPercent")
-
-        return ret
-
-    @property
-    def icon(self) -> Optional[str]:
-        """Get the icon for the sensor."""
-        ret = "mdi:signal"
-        if self._value() == None:
-            ret = "mdi:signal-off"
-
-        return ret
-
-    @property
-    def native_value(self) -> StateType | date | datetime:
-        """Get the value of the sensor."""
-        return self._value()
-
-class HDHomerunTunerSignalStrengthSensor(HDHomerunEntity, SensorEntity):
-    """Representation of an HDHomeRun tuner signal quality."""
-
-    def __init__(
-        self,
-        config_entry: ConfigEntry,
-        coordinator: DataUpdateCoordinator,
-        description: SensorEntityDescription,
-    ) -> None:
-        """Initialise."""
-        self.entity_domain = ENTITY_DOMAIN
-        super().__init__(
-            config_entry=config_entry,
-            coordinator=coordinator,
-            description=description,
-        )
-
-        self._attr_entity_category = EntityCategory.DIAGNOSTIC
-
-        self._tuner: dict = self._get_tuner()
-
-    def _get_tuner(self) -> Dict[str, int | str]:
-        """Get the tuner information from the coordinator."""
-        tuner: Dict[str, int | str] = {}
-        for _tuner in self.coordinator.data.tuner_status:
-            if (
-                _tuner.get("Resource", "").lower()
-                == self.entity_description.name.lower().split("_")[0]
-            ):
-                tuner = _tuner
-                break
-
-        return tuner
-
-    def _handle_coordinator_update(self) -> None:
-        """Update the device information when the coordinator updates."""
-        super()._handle_coordinator_update()
-        self._tuner = self._get_tuner()
-
-    def _value(self) -> StateType | date | datetime:
-        """Determine the value of the sensor."""
-        ret = None
-        if self._tuner.get("SignalStrengthPercent"):
-            ret = self._tuner.get("SignalStrengthPercent")
+        if self._tuner.get(self.api_parameter):
+            ret = self._tuner.get(self.api_parameter)
 
         return ret
 
