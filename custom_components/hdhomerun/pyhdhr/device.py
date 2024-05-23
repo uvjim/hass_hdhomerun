@@ -32,7 +32,7 @@ from .protocol import HDHomeRunProtocol
 _LOGGER = logging.getLogger(__name__)
 
 
-class DevicePaths(str, StrEnum):
+class DevicePaths(StrEnum):
     """Available paths on the device."""
 
     DISCOVER = "discover.json"
