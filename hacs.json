@@ -1,6 +1,6 @@
 {
   "domains": "hdhomerun",
-  "homeassistant": "2023.2.0",
+  "homeassistant": "2024.2.0",
   "name": "HDHomeRun",
   "render_readme": true
 }
