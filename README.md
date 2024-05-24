@@ -49,6 +49,12 @@ list
   `Scanning` or the channel being watched, using the specified format)
   * Virtual channel number, virtual channel name, frequency, signal strength,
     signal quality, symbol quality, network rate and target IP (as applicable)
+* Tuner X Frequency - where X is the tuner number
+* Tuner X Network Rate - where X is the tuner number
+* Tuner X Signal Quality - where X is the tuner number
+* Tuner X Signal Strength - where X is the tuner number
+* Tuner X Symbol Strength - where X is the tuner number
+* Tuner X Target IP - where X is the tuner number
 * Version - the current firmware version of the device _(only if using a
   HASS version below 2022.4)_
 
