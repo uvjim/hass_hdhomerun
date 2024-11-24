@@ -11,7 +11,7 @@ run-name: "Build and release ${{ github.ref_name }}"
 env:
   ARTIFACT_PATH: artifacts
   BETA_RELEASE: ${{ contains(github.ref_name, 'b') }} 
-  PACKAGE_NAME: hass_hdhomerun
+  PACKAGE_NAME: hdhomerun
 
 jobs:
   init:
