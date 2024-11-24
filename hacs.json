@@ -1,6 +1,8 @@
 {
+  "filename": "hdhomerun.zip",
   "domains": "hdhomerun",
   "homeassistant": "2024.2.0",
   "name": "HDHomeRun",
-  "render_readme": true
+  "render_readme": true,
+  "zip_release": true
 }
