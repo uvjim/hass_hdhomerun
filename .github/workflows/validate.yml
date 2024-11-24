@@ -1,0 +1,35 @@
+name: Validate
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  "0 0 * * *"
+  # push:
+  #   branches:
+  #     - 'main'
+  #   paths-ignore:
+  #     - 'images/**'
+  #     - 'README.md'
+  # pull_request:
+  #   branches:
+  #     - 'main'
+  #   paths-ignore:
+  #     - 'images/**'
+  #     - 'README.md'
+
+jobs:
+  hassfest:
+    name: "Hassfest"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    name: "HACS"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: HACS Action
+        uses: "hacs/action@main"
+        with: 
+          category: "integration"
