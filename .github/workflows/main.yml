@@ -1,0 +1,79 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "[0-9][0-9][0-9][0-9].[1-9][0-2]?.[0-9]"
+      - "[0-9][0-9][0-9][0-9].[1-9][0-2]?.[0-9]+b[0-9]+"
+
+run-name: "Build and release ${{ github.ref_name }}"
+
+env:
+  ARTIFACT_PATH: artifacts
+  BETA_RELEASE: ${{ contains(github.ref_name, 'b') }} 
+  PACKAGE_NAME: hass_hdhomerun
+
+jobs:
+  init:
+    name: Initialise
+    outputs:
+      beta_release: ${{ steps.variables.outputs.beta_release }}
+      
+    runs-on: ubuntu-latest
+    steps:
+      - name: Variables
+        id: variables
+        run: |
+          echo "beta_release=${{ env.BETA_RELEASE }}" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build
+    needs:
+      - init
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update manifest version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i -o json '.version="${{ github.ref_name }}"' 'custom_components/${{ env.PACKAGE_NAME }}/manifest.json'
+
+      - name: Prepare artifacts location
+        run: |
+          mkdir -p '${{ env.ARTIFACT_PATH }}'
+
+      - name: Create the zip file
+        run: |
+          cd 'custom_components/${{ env.PACKAGE_NAME}}'
+          zip ${{ env.PACKAGE_NAME}}.zip -r ./
+          mv '${{ env.PACKAGE_NAME }}.zip' '../../${{ env.ARTIFACT_PATH }}'
+
+      - name: Upload the artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.PACKAGE_NAME }}"
+          path: "${{ env.ARTIFACT_PATH }}"
+          if-no-files-found: error
+          retention-days: 1 
+
+  release:
+    name: Release
+    needs: 
+      - init
+      - build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            ${{ env.PACKAGE_NAME }}/*
+          generate_release_notes: true
+          prerelease: ${{ needs.init.outputs.beta_release }}
