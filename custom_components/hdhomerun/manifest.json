@@ -1,4 +1,6 @@
 {
+  "domain": "hdhomerun",
+  "name": "HDHomeRun",
   "codeowners": [
     "@uvjim"
   ],
@@ -6,11 +8,9 @@
   "dependencies": [
     "ssdp"
   ],
-  "domain": "hdhomerun",
   "documentation": "https://github.com/uvjim/hass_hdhomerun",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/uvjim/hass_hdhomerun/issues",
-  "name": "HDHomeRun",
   "requirements": [],
   "ssdp": [
     {
