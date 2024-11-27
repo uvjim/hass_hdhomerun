@@ -232,7 +232,7 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, Logger, domain=DOMAIN):
     async def async_step_details(self, user_input=None) -> data_entry_flow.FlowResult:
         """Execute the discovery before proceeding."""
         _LOGGER.debug(self.format("entered, user_input: %s"), user_input)
-        if not self._task_details:
+        if self._task_details is None:
             _LOGGER.debug(self.format("creating task for gathering details"))
             if self._host:  # try and lookup the device
                 self._task_details = self.hass.async_create_task(
@@ -242,21 +242,23 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, Logger, domain=DOMAIN):
                 self._task_details = self.hass.async_create_task(
                     self._async_task_discover_all()
                 )
-            return self.async_show_progress(
-                step_id=STEP_DETAILS, progress_action="task_discover"
-            )
 
-        await self._task_details
+        if self._task_details.done():
+            _LOGGER.debug(self.format("_errors: %s"), self._errors)
+            next_step: str = STEP_SELECT_DEVICE
+            if self._errors:
+                next_step = STEP_USER
+            if self._discovered_devices_hd is None:
+                next_step = STEP_FRIENDLY_NAME
 
-        _LOGGER.debug(self.format("_errors: %s"), self._errors)
-        if self._errors:
-            return self.async_show_progress_done(next_step_id=STEP_USER)
+            _LOGGER.debug(self.format("next step: %s"), next_step)
+            return self.async_show_progress_done(next_step_id=next_step)
 
-        _LOGGER.debug(self.format("proceeding to next step"))
-        if self._discovered_devices_hd is None:
-            return self.async_show_progress_done(next_step_id=STEP_FRIENDLY_NAME)
-
-        return self.async_show_progress_done(next_step_id=STEP_SELECT_DEVICE)
+        return self.async_show_progress(
+            step_id=STEP_DETAILS,
+            progress_action="task_discover",
+            progress_task=self._task_details,
+        )
 
     async def async_step_finish(self, _=None) -> data_entry_flow.FlowResult:
         """Finalise the configuration entry."""
