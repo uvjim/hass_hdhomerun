@@ -377,7 +377,7 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, Logger, domain=DOMAIN):
         await self.async_set_unique_id(unique_id=serial)
         matching_instance: (
             list[config_entries.ConfigEntry] | config_entries.ConfigEntry
-        ) = [instance for instance in self.hass.config_entries.async_entries(DOMAIN)]
+        ) = list(self.hass.config_entries.async_entries(DOMAIN))
         if matching_instance:
             matching_instance = matching_instance[0]
             if matching_instance.source == "ssdp":
