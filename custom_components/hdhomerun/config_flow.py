@@ -378,7 +378,7 @@ class HDHomerunConfigFlow(config_entries.ConfigFlow, Logger, domain=DOMAIN):
         config_entry: config_entries.ConfigEntry = await self.async_set_unique_id(
             unique_id=serial
         )
-        if config_entry.source == "ssdp":
+        if config_entry is not None and config_entry.source == "ssdp":
             ip: ipaddress.IPv4Address | ipaddress.IPv6Address = ipaddress.ip_address(
                 self._host
             )
