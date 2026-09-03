@@ -88,7 +88,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
             device_registry: dr.DeviceRegistry = dr.async_get(hass)
             device_entry: list[dr.DeviceEntry] = [
                 device_details
-                for _, device_details in device_registry.devices.items()
+                for device_details in dr.async_entries_for_config_entry(
+                    device_registry, config_entry.entry_id
+                )
                 if (DOMAIN, config_entry.unique_id) in device_details.identifiers
             ]
             if device_entry:
