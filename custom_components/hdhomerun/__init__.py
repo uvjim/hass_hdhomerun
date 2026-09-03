@@ -11,7 +11,7 @@ from typing import Any, Callable
 import homeassistant.helpers.device_registry as dr
 import homeassistant.helpers.entity_registry as er
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_SCAN_INTERVAL
+from homeassistant.const import CONF_SCAN_INTERVAL, MAJOR_VERSION, MINOR_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
@@ -41,6 +41,10 @@ from .pyhdhr.discover import Discover, HDHomeRunDevice
 # endregion
 
 _LOGGER = logging.getLogger(__name__)
+
+# `DeviceInfo["via_device"]` is deprecated from HA Core 2026.8 (removed in 2027.8) in
+# favour of `via_device_id`; older versions reject the new key, so pick per version.
+_VIA_DEVICE_ID_SUPPORTED: bool = (MAJOR_VERSION, MINOR_VERSION) >= (2026, 8)
 
 
 async def _async_reload(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
@@ -151,6 +155,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     if coordinator_general.data is not None:
         await coordinator_general.data.async_get_lineup_http()
         await coordinator_general.data.async_get_scanning_status()
+        # Register the main device before the platforms load so that the tuner
+        # devices can always find it to link to (see HDHomerunTunerEntity.device_info).
+        dr.async_get(hass).async_get_or_create(
+            config_entry_id=config_entry.entry_id,
+            **_main_device_info(config_entry, coordinator_general.data),
+        )
 
     coordinator_tuner_status: DataUpdateCoordinator = DataUpdateCoordinator(
         hass,
@@ -196,6 +206,19 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
     return ret
 
 
+def _main_device_info(config_entry: ConfigEntry, device: HDHomeRunDevice) -> DeviceInfo:
+    """Return the device information for the main HDHomeRun device."""
+    return DeviceInfo(
+        configuration_url=device.base_url,
+        entry_type=DeviceEntryType.SERVICE,
+        identifiers={(DOMAIN, config_entry.unique_id)},
+        manufacturer=f"SiliconDust ({device.discovery_method.name})",
+        model=device.model,
+        name=config_entry.title,
+        sw_version=device.installed_version,
+    )
+
+
 # region #-- base entity --#
 class HDHomerunEntity(CoordinatorEntity):
     """Representation of an HDHomerun entity."""
@@ -226,17 +249,7 @@ class HDHomerunEntity(CoordinatorEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return the device information of the entity."""
-        return DeviceInfo(
-            configuration_url=self.coordinator.data.base_url,
-            entry_type=DeviceEntryType.SERVICE,
-            identifiers={(DOMAIN, self._config.unique_id)},
-            manufacturer=f"SiliconDust ({self.coordinator.data.discovery_method.name})",
-            model=self.coordinator.data.model if self.coordinator.data else "",
-            name=self._config.title,
-            sw_version=(
-                self.coordinator.data.installed_version if self.coordinator.data else ""
-            ),
-        )
+        return _main_device_info(self._config, self.coordinator.data)
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
@@ -278,13 +291,31 @@ class HDHomerunTunerEntity(CoordinatorEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return the device information of the entity."""
-        return DeviceInfo(
+        device_info = DeviceInfo(
             identifiers={(DOMAIN, f"{self._config.unique_id}_{self._device_name}")},
             manufacturer=f"SiliconDust ({self.coordinator.data.discovery_method.name})",
             model=self.coordinator.data.model if self.coordinator.data else "",
             name=self._device_name,
-            via_device=(DOMAIN, self._config.unique_id),
         )
+
+        # Link the tuner to the main HDHomeRun device.
+        parent_identifier: tuple[str, str] = (DOMAIN, self._config.unique_id)
+        if not _VIA_DEVICE_ID_SUPPORTED:
+            device_info["via_device"] = parent_identifier
+        elif (
+            parent_device := dr.async_get(self.hass).async_get_device_by_identifier(
+                parent_identifier, self._config.entry_id
+            )
+        ) is not None:
+            device_info["via_device_id"] = parent_device.id
+        else:
+            _LOGGER.debug(
+                "Main device %s not registered yet; not linking tuner %s to it",
+                self._config.unique_id,
+                self._device_name,
+            )
+
+        return device_info
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
