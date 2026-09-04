@@ -132,3 +132,6 @@ dmypy.json
 .idea/
 pyvelop/
 .vscode/launch.json
+
+# Docker
+docker-compose.yml
