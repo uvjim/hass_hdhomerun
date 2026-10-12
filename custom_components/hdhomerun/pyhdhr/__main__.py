@@ -108,7 +108,6 @@ async def discover(
                         ("device_id", "Device ID"),
                         ("device_type", "Device Type"),
                         ("discovery_method", "Discovery Method"),
-                        ("device_auth_string", "Device Auth"),
                         ("base_url", "Base URL"),
                         ("lineup_url", "LineUp URL"),
                         ("tuner_count", "# Tuners"),

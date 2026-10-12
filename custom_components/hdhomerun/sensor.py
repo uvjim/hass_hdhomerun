@@ -8,7 +8,7 @@ import logging
 import os.path
 import re
 from collections.abc import Mapping
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from enum import StrEnum
 from typing import Any, Callable
 
@@ -31,6 +31,7 @@ from . import HDHomerunEntity, HDHomerunTunerEntity, entity_cleanup
 from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
     CONF_DATA_COORDINATOR_TUNER_STATUS,
+    CONF_EPG_PROXY,
     CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
     CONF_TUNER_CHANNEL_FORMAT,
     CONF_TUNER_CHANNEL_NAME,
@@ -43,10 +44,64 @@ from .const import (
 )
 from .pyhdhr.const import DiscoverMode
 from .pyhdhr.discover import HDHomeRunDevice
+from .epg import EPGProxy
 
 # endregion
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class EPGStatus(SensorEntity):
+    """Guide health and UHF URL for an authenticated HA user."""
+
+    _attr_has_entity_name = True
+
+    def __init__(self, entry: ConfigEntry, proxy: EPGProxy) -> None:
+        """Bind the status entity to the entry's cache."""
+        self.entry = entry
+        self.proxy = proxy
+        self._attr_unique_id = f"{entry.unique_id}::epg::status"
+        self._attr_translation_key = "epg_status"
+        self._attr_device_info = {"identifiers": {(DOMAIN, entry.unique_id)}}
+
+    async def async_added_to_hass(self) -> None:
+        """Listen for snapshot and token changes."""
+        self.proxy.listeners.append(self.async_write_ha_state)
+        self.async_on_remove(lambda: self.proxy.listeners.remove(self.async_write_ha_state))
+
+    @property
+    def native_value(self) -> str:
+        """Show whether the cached guide is present and still covers now."""
+        if not self.proxy.xml:
+            return "empty"
+        if datetime.fromisoformat(self.proxy.summary["coverage_end"]) < datetime.now(timezone.utc):
+            return "expired"
+        return "refresh_failed" if self.proxy.error else "ready"
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        """Expose URL, cache age, coverage and advisory lineup/name matches."""
+        proxy = self.proxy
+        base = self.hass.config.external_url or self.hass.config.internal_url or ""
+        path = f"/api/hdhomerun/xmltv/{proxy.token}"
+        attrs = {
+            "url": f"{base.rstrip('/')}{path}",
+            "gzip_url": f"{base.rstrip('/')}{path}.xml.gz",
+            "fetched_at": proxy.fetched_at,
+            "cache_age_hours": round((datetime.now(timezone.utc) - datetime.fromisoformat(proxy.fetched_at)).total_seconds() / 3600, 2) if proxy.fetched_at else None,
+            "last_error_type": proxy.error,
+            **{key: value for key, value in proxy.summary.items() if key != "channel_names"},
+        }
+        device = self.hass.data[DOMAIN][self.entry.entry_id][CONF_DATA_COORDINATOR_GENERAL].data
+        lineup = device.channels or []
+        names = {name.casefold() for name in proxy.summary.get("channel_names", [])}
+        unmatched = [f"{channel.get('GuideNumber', '?')} {channel.get('GuideName', '')}" for channel in lineup
+                     if channel.get("GuideName", "").casefold() not in names
+                     and str(channel.get("GuideNumber", "")).casefold() not in names]
+        attrs["lineup_channels"] = len(lineup)
+        attrs["lineup_name_matches"] = len(lineup) - len(unmatched)
+        attrs["unmatched_lineup_examples"] = unmatched[:20]
+        return attrs
 
 
 # region #-- sensor descriptions --#
@@ -133,8 +188,11 @@ async def async_setup_entry(
         CONF_DATA_COORDINATOR_TUNER_STATUS
     ]
 
-    sensors: list[HDHomerunSensor] = []
+    sensors: list = []
     sensors_to_remove: list[HDHomerunSensor] = []
+
+    if (proxy := hass.data[DOMAIN][config_entry.entry_id].get(CONF_EPG_PROXY)) is not None:
+        sensors.append(EPGStatus(config_entry, proxy))
 
     # region #-- add version sensors if need be --#
     if UPDATE_DOMAIN is None:

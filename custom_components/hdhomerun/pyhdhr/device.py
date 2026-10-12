@@ -15,7 +15,6 @@ from aiohttp.hdrs import USER_AGENT
 
 from .const import (
     HDHOMERUN_TAG_BASE_URL,
-    HDHOMERUN_TAG_DEVICE_AUTH_STR,
     HDHOMERUN_TAG_DEVICE_ID,
     HDHOMERUN_TAG_DEVICE_TYPE,
     HDHOMERUN_TAG_GETSET_NAME,
@@ -65,7 +64,6 @@ class HDHomeRunDevice:
 
         self._base_url: str | None = None
         self._channel_sources: list[str] | None = None
-        self._device_auth_str: str | None = None
         self._device_id: str | None = None
         self._device_type: DeviceType | None = None
         self._lineup_url: str | None = None
@@ -87,8 +85,6 @@ class HDHomeRunDevice:
         device = device_details or self
         value = getattr(device, "_processed_datagram", {}).get("data", {}).get(tag, b"")
         if tag == HDHOMERUN_TAG_BASE_URL:
-            ret = value.decode()
-        elif tag == HDHOMERUN_TAG_DEVICE_AUTH_STR:
             ret = value.decode()
         elif tag == HDHOMERUN_TAG_DEVICE_ID:
             (property_value,) = struct.unpack(">L", value)
@@ -125,6 +121,7 @@ class HDHomeRunDevice:
         else:
             key: str = resp.url.name.split(".")[0]
             self._raw_details[key] = await resp.json()
+            self._raw_details[key].pop("DeviceAuth", None)
             _LOGGER.debug(
                 self._log_formatter.format("results for %s: %s"),
                 key,
@@ -148,8 +145,6 @@ class HDHomeRunDevice:
                 value = self.get_from_datagram(device_details=updated_device, tag=tag)
                 if tag == HDHOMERUN_TAG_BASE_URL:
                     self._base_url = value
-                elif tag == HDHOMERUN_TAG_DEVICE_AUTH_STR:
-                    self._device_auth_str = value
                 elif tag == HDHOMERUN_TAG_DEVICE_ID:
                     self._device_id = value
                 elif tag == HDHOMERUN_TAG_DEVICE_TYPE:
@@ -526,13 +521,6 @@ class HDHomeRunDevice:
     def channels(self) -> list[dict[str, str]]:
         """Get a list of channels as per the HTTP API."""
         return self._raw_details.get("lineup", [])
-
-    @property
-    def device_auth_string(self) -> str | None:
-        """Get the device auth string."""
-        return self._raw_details.get("discover", {}).get(
-            "DeviceAuth", self._device_auth_str
-        )
 
     @property
     def device_id(self) -> str | None:

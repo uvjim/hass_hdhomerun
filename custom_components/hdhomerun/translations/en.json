@@ -37,6 +37,8 @@
             }
         },
         "button": {
+            "epg_refresh": {"name": "Refresh EPG"},
+            "epg_rotate": {"name": "Rotate EPG URL"},
             "channel_scan": {
                 "name": "Channel Scan"
             },
@@ -50,6 +52,7 @@
             }
         },
         "sensor": {
+            "epg_status": {"name": "EPG status"},
             "channel_count": {
                 "name": "Channel Count"
             },
@@ -98,6 +101,8 @@
         "step": {
             "options": {
                 "data": {
+                    "epg_enabled": "Enable XMLTV EPG proxy",
+                    "epg_interval_hours": "EPG refresh interval (hours)",
                     "channel_entity_picture_path": "Channel logo path",
                     "channel_format": "Pick the format you'd like the channel to be displayed in"
                 },

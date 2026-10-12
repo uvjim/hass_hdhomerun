@@ -26,15 +26,20 @@ from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
     CONF_DATA_COORDINATOR_TUNER_STATUS,
     CONF_DISCOVERY_MODE,
+    CONF_EPG_ENABLED,
+    CONF_EPG_INTERVAL,
+    CONF_EPG_PROXY,
     CONF_HOST,
     CONF_SCAN_INTERVAL_TUNER_STATUS,
     DEF_DISCOVERY_MODE,
+    DEF_EPG_INTERVAL,
     DEF_SCAN_INTERVAL_SECS,
     DEF_SCAN_INTERVAL_TUNER_STATUS_SECS,
     DOMAIN,
     PLATFORMS,
 )
 from .logger import Logger
+from .epg import EPGProxy, XMLTVView
 from .pyhdhr.const import DiscoverMode
 from .pyhdhr.discover import Discover, HDHomeRunDevice
 
@@ -45,6 +50,13 @@ _LOGGER = logging.getLogger(__name__)
 # `DeviceInfo["via_device"]` is deprecated from HA Core 2026.8 (removed in 2027.8) in
 # favour of `via_device_id`; older versions reject the new key, so pick per version.
 _VIA_DEVICE_ID_SUPPORTED: bool = (MAJOR_VERSION, MINOR_VERSION) >= (2026, 8)
+
+
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+    """Register one HTTP route for all loaded EPG-enabled entries."""
+    hass.data.setdefault(DOMAIN, {})["_epg_tokens"] = {}
+    hass.http.register_view(XMLTVView())
+    return True
 
 
 async def _async_reload(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
@@ -181,11 +193,22 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     await coordinator_tuner_status.async_config_entry_first_refresh()
     # endregion
 
+    if config_entry.options.get(CONF_EPG_ENABLED, False):
+        proxy = EPGProxy(
+            hass, config_entry.entry_id, config_entry.data[CONF_HOST],
+            config_entry.options.get(CONF_EPG_INTERVAL, DEF_EPG_INTERVAL),
+        )
+        await proxy.load()
+        hass.data[DOMAIN][config_entry.entry_id][CONF_EPG_PROXY] = proxy
+        hass.data[DOMAIN]["_epg_tokens"][proxy.token] = proxy
+
     # region #-- setup the platforms --#
     setup_platforms: list[str] = list(filter(None, PLATFORMS))
     _LOGGER.debug(log_formatter.format("setting up platforms: %s"), setup_platforms)
     await hass.config_entries.async_forward_entry_setups(config_entry, setup_platforms)
     # endregion
+    if config_entry.options.get(CONF_EPG_ENABLED, False):
+        proxy.start()
 
     _LOGGER.debug(log_formatter.format("exited"))
     return True
@@ -199,6 +222,10 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
         config_entry, setup_platforms
     )
     if ret:
+        proxy = hass.data[DOMAIN][config_entry.entry_id].get(CONF_EPG_PROXY)
+        if proxy:
+            proxy.stop()
+            hass.data[DOMAIN]["_epg_tokens"].pop(proxy.token, None)
         hass.data[DOMAIN].pop(config_entry.entry_id)
         ret = True
     else:

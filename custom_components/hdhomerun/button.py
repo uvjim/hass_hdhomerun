@@ -16,6 +16,7 @@ from homeassistant.components.button import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
@@ -26,11 +27,13 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from . import HDHomerunEntity, entity_cleanup
 from .const import (
     CONF_DATA_COORDINATOR_GENERAL,
+    CONF_EPG_PROXY,
     DOMAIN,
     SIGNAL_HDHOMERUN_CHANNEL_SCANNING_STARTED,
     SIGNAL_HDHOMERUN_CHANNEL_SOURCE_CHANGE,
 )
 from .pyhdhr.discover import HDHomeRunDevice
+from .epg import EPGProxy
 
 # endregion
 
@@ -99,6 +102,11 @@ async def async_setup_entry(
             )
         )
 
+    if (proxy := hass.data[DOMAIN][config_entry.entry_id].get(CONF_EPG_PROXY)) is not None:
+        buttons.extend([
+            EPGButton(config_entry, proxy, "refresh"),
+            EPGButton(config_entry, proxy, "rotate"),
+        ])
     async_add_entities(buttons)
 
     buttons_to_remove: list = []
@@ -178,3 +186,25 @@ class HDHomeRunButton(HDHomerunEntity, ButtonEntity, ABC):
             hass=self.hass,
             self=self,
         )
+
+
+class EPGButton(ButtonEntity):
+    """Authenticated EPG maintenance action."""
+
+    _attr_has_entity_name = True
+
+    def __init__(self, entry: ConfigEntry, proxy: EPGProxy, action: str) -> None:
+        """Bind a maintenance button to the entry's cache."""
+        self.proxy = proxy
+        self.action = action
+        self._attr_unique_id = f"{entry.unique_id}::epg::{action}"
+        self._attr_translation_key = f"epg_{action}"
+        self._attr_device_info = {"identifiers": {(DOMAIN, entry.unique_id)}}
+
+    async def async_press(self) -> None:
+        """Refresh or revoke the previous URL."""
+        if self.action == "refresh":
+            if not await self.proxy.refresh():
+                raise HomeAssistantError("EPG refresh failed; see the EPG status sensor")
+        else:
+            await self.proxy.rotate(self.hass.data[DOMAIN]["_epg_tokens"])

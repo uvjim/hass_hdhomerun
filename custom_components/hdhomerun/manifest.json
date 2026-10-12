@@ -6,12 +6,13 @@
   ],
   "config_flow": true,
   "dependencies": [
-    "ssdp"
+    "ssdp",
+    "http"
   ],
   "documentation": "https://github.com/uvjim/hass_hdhomerun",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/uvjim/hass_hdhomerun/issues",
-  "requirements": [],
+  "requirements": ["defusedxml==0.7.1"],
   "ssdp": [
     {
       "st": "urn:schemas-upnp-org:device:MediaServer:1",

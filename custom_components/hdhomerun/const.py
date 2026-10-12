@@ -18,6 +18,9 @@ CONF_DATA_COORDINATOR_TUNER_STATUS: str = "data_coordinaror_tuner_status"
 CONF_DEVICE: str = "hdhomerun_device"
 CONF_DISCOVERY_MODE: str = "discovery_mode"
 CONF_HOST: str = "host"
+CONF_EPG_ENABLED: str = "epg_enabled"
+CONF_EPG_INTERVAL: str = "epg_interval_hours"
+CONF_EPG_PROXY: str = "epg_proxy"
 CONF_SCAN_INTERVAL_TUNER_STATUS: str = "scan_interval_tuner_status"
 CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH: str = "channel_entity_picture_path"
 CONF_TUNER_CHANNEL_FORMAT: str = "channel_format"
@@ -26,6 +29,7 @@ CONF_TUNER_CHANNEL_NUMBER_NAME: str = "channel_number_name"
 CONF_TUNER_CHANNEL_NUMBER: str = "channel_number"
 
 DEF_DISCOVERY_MODE: DiscoverMode = DiscoverMode.AUTO
+DEF_EPG_INTERVAL: int = 6
 DEF_SCAN_INTERVAL_SECS: int = 300
 DEF_SCAN_INTERVAL_TUNER_STATUS_SECS: int = 10
 DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH: str = ""

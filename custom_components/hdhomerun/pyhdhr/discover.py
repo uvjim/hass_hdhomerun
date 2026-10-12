@@ -16,6 +16,7 @@ from .const import (
     HDHOMERUN_DEVICE_TYPE_TUNER,
     HDHOMERUN_DISCOVER_UDP_PORT,
     HDHOMERUN_TAG_DEVICE_ID,
+    HDHOMERUN_TAG_DEVICE_AUTH_STR,
     HDHOMERUN_TAG_DEVICE_TYPE,
     HDHOMERUN_TYPE_DISCOVER_REQ,
     HDHOMERUN_TYPE_DISCOVER_RPY,
@@ -300,6 +301,7 @@ class _DiscoverProtocol(asyncio.DatagramProtocol):
                 ip_address, DiscoverMode.UDP
             )
             response = HDHomeRunProtocol.parse_response(data)
+            response.get("data", {}).pop(HDHOMERUN_TAG_DEVICE_AUTH_STR, None)
             _LOGGER.debug("UDP response: %s", response)
             # endregion
 

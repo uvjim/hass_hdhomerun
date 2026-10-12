@@ -35,6 +35,8 @@ from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
+    CONF_EPG_ENABLED,
+    CONF_EPG_INTERVAL,
     CONF_HOST,
     CONF_SCAN_INTERVAL_TUNER_STATUS,
     CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
@@ -42,6 +44,7 @@ from .const import (
     CONF_TUNER_CHANNEL_NAME,
     CONF_TUNER_CHANNEL_NUMBER,
     CONF_TUNER_CHANNEL_NUMBER_NAME,
+    DEF_EPG_INTERVAL,
     DEF_SCAN_INTERVAL_SECS,
     DEF_SCAN_INTERVAL_TUNER_STATUS_SECS,
     DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
@@ -92,6 +95,15 @@ async def _async_build_schema_with_user_input(step: str, user_input=None) -> vol
 
     if step == Steps.OPTIONS:
         schema = {
+            vol.Optional(
+                CONF_EPG_ENABLED, default=user_input.get(CONF_EPG_ENABLED, False)
+            ): selector.BooleanSelector(),
+            vol.Required(
+                CONF_EPG_INTERVAL,
+                default=str(user_input.get(CONF_EPG_INTERVAL, DEF_EPG_INTERVAL)),
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=["3", "6", "12", "24"])
+            ),
             vol.Optional(
                 CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
                 default=user_input.get(
@@ -474,6 +486,7 @@ class HDHomerunOptionsFlowHandler(config_entries.OptionsFlow, Logger):
         _LOGGER.debug(self.format("entered, user_input: %s"), user_input)
         if user_input is not None:
             self._errors = {}
+            user_input[CONF_EPG_INTERVAL] = int(user_input[CONF_EPG_INTERVAL])
             user_input[CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH] = user_input.get(
                 CONF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,
                 DEF_TUNER_CHANNEL_ENTITY_PICTURE_PATH,

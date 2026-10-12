@@ -23,6 +23,67 @@ This integration can be used to get basic information on each HDHomeRun
 device in the network. The integration can use the UDP broadcast discovery
 protocol, the TCP control protocol and the HTTP API.
 
+### Optional XMLTV guide proxy
+
+Enable **XMLTV EPG proxy** in the device's integration options. The default
+refresh is six hours; 3, 6, 12 and 24 hours are available. Refreshes are
+slightly randomized to avoid fixed-time requests to SiliconDust. The first
+background fetch starts within five minutes; use the **Refresh EPG** button
+to fetch immediately. This feature is off by default and requires the tuner
+to provide `DeviceAuth` in its local `discover.json`, and HA to reach
+`https://api.hdhomerun.com/api/xmltv`. The integration requests gzip and reads
+the current auth immediately before each download; it never stores the auth.
+
+The **EPG status** sensor exposes `url` and `gzip_url` attributes. Set HA's internal or
+external URL to an address UHF can reach (otherwise this attribute is only a
+relative path), then enter that full URL as UHF's XMLTV source. No HA bearer
+token is needed. A valid cache serves even when the tuner or SiliconDust is
+temporarily offline. Until the first successful refresh the URL returns 503;
+disabled/unloaded/rotated URLs return 404. The status sensor shows `empty`,
+`ready`, `refresh_failed`, or `expired`, plus last fetch time, cache age in
+hours, programme/channel counts, earliest start/latest stop, and advisory
+lineup-to-XMLTV display-name matches and up to 20 unmatched examples. XMLTV
+channel IDs are not rewritten; check mapping in UHF itself. Feed coverage and
+lineup can differ from the local device, particularly with multiple tuners.
+
+The normal URL serves XML and uses HTTP gzip compression when the client
+advertises `Accept-Encoding: gzip`. The `gzip_url` appends `.xml.gz` and always
+serves a gzip file (`application/gzip`, without HTTP `Content-Encoding`). Use
+that option only with players that support gzip XMLTV files. Both formats
+serve the same validated snapshot and share the same access token. Compression
+is prepared off the HA event loop on refresh/restart and reused for requests;
+the gzip snapshot adds memory overhead but is not stored as a second disk copy.
+Upstream downloads already request gzip; actual compression depends on
+SiliconDust's response, and the size limit still applies after decompression.
+
+**Treat the URL as a password:** anyone who obtains it can read the guide.
+Tokens contain 128 random bits encoded as 22 URL-safe characters. On updating
+from the former 64-character format, the next integration load generates a new
+token; copy the new URL into your player. Old URLs are not supported.
+Use HTTPS if UHF connects across an untrusted network. The URL is visible to
+HA users via entity attributes and may appear in HA history, reverse-proxy
+access logs, or UHF configuration. Do not publish it in screenshots or issue
+reports. The **Rotate EPG URL** button immediately invalidates the previous
+URL; update UHF after rotating. Disabling this option invalidates the URL
+while disabled but retains the private HA storage snapshot/token for re-enable.
+Removing an entry does not automatically delete its stored guide; remove its
+`.storage/hdhomerun/epg_<entry_id>` file manually if retiring the device.
+SiliconDust determines the available guide window (typically two days, or
+longer with eligible DVR service); this proxy cannot add missing guide data.
+
+The guide is validated as XMLTV (`tv`, uniquely identified channels and
+programmes with valid references/times) and capped at 48 MiB decompressed.
+The HTTP download is chunked and stops at the cap; validation parses
+incrementally rather than retaining a full XML tree. The complete validated
+guide is still kept in memory and in HA's private, atomic storage so UHF can
+retrieve it while offline; allow additional memory and disk headroom for
+serialization and an in-progress refresh. An invalid, oversized or failed
+download never replaces the last good cache. The 3.31 MiB two-day guide tested
+with this integration suggests roughly 23 MiB at 14 days for a similar lineup, but
+real guide size depends on channels and programme detail. A larger entitled
+feed may still exceed 48 MiB; check `last_error_type` and the HA logs before
+considering a higher limit or a disk-backed streaming cache.
+
 ## Entities Provided
 
 Where applicable the sub-items in the list detail the additional attributes
