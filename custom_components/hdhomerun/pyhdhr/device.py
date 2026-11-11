@@ -40,6 +40,7 @@ class DevicePaths(StrEnum):
     DISCOVER = "discover.json"
     LINEUP_ACTION = "lineup.post"
     LINEUP_STATUS = "lineup_status.json"
+    SYSTEM_ACTION = "system.post"
     TUNER_STATUS = "status.json"
 
 
@@ -495,6 +496,37 @@ class HDHomeRunDevice:
             raise err from None
 
         _LOGGER.debug(self._log_formatter.format("exited"))
+
+    @needs_http
+    async def async_upgrade_install(self) -> None:
+        """Install the pending firmware upgrade; the device reboots afterwards."""
+        _LOGGER.debug(self._log_formatter.format("entered"))
+        try:
+            await self._session.post(
+                url=f"{self.base_url}/{DevicePaths.SYSTEM_ACTION.value}",
+                params={"upgrade": "install"},
+                raise_for_status=True,
+                headers={USER_AGENT: HTTP_USER_AGENT},
+            )
+        except Exception as err:
+            _LOGGER.error(self._log_formatter.format("%s; %s"), type(err), err)
+            raise err from None
+
+        _LOGGER.debug(self._log_formatter.format("exited"))
+
+    @needs_http
+    async def async_get_firmware_version(self, timeout: float) -> str | None:
+        """Read FirmwareVersion straight from the device, leaving cached details alone.
+
+        Raises aiohttp.ClientError or TimeoutError if the device doesn't answer in time.
+        """
+        resp: aiohttp.ClientResponse = await self._session.get(
+            url=f"{self.base_url}/{DevicePaths.DISCOVER.value}",
+            raise_for_status=True,
+            headers={USER_AGENT: HTTP_USER_AGENT},
+            timeout=aiohttp.ClientTimeout(total=timeout),
+        )
+        return (await resp.json()).get("FirmwareVersion")
 
     # region #-- properties --#
     @property
